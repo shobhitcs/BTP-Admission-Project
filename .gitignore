@@ -1,0 +1,9 @@
+random_num.py
+cs.txt
+backend-files/*
+
+# Backend Files
+backend/node_modules
+
+#Frontend Files
+frontend/node_modules

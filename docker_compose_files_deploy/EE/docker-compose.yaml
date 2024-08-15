@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  #Database with two volumes  
+  mysqldb_EE:
+    image: mysql:8.0.30
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1
+    environment:
+      - MYSQL_DATABASE=Applicants2023_EE
+      - MYSQL_PASSWORD=Your_Password
+      - MYSQL_ROOT_PASSWORD=Your_Password
+      - MYSQL_HOSTNAME=mysqldb_EE
+    ports:
+      - 5545:3306
+    volumes: 
+      - db-config-EE:/etc/mysql
+      - db-data:-EE/var/lib/mysql
+  
+  #Backend with one volume to store files folder  
+  backend_EE:
+    build: ./BTP_Backend
+    image: btp-backend-compose
+    environment:
+      - MYSQL_DATABASE=Applicants2023_EE
+      # Note that the MYSQL_PASSWORD should be same as MYSQL_ROOT_PASSWORD here
+      - MYSQL_PASSWORD=Your_Password
+      - MYSQL_ROOT_PASSWORD=Your_Password
+      - MYSQL_HOSTNAME=mysqldb_EE
+    depends_on:
+      - mysqldb_EE
+    ports:
+      - 4445:4444
+    volumes: 
+      - ./backend-EE-files:/usr/src/app/files
+      - ./backend-EE-files/generatedOffers:/usr/src/app/files/generatedOffers
+      - ./backend-EE-files/roundUpdates:/usr/src/app/files/roundUpdates
+    stdin_open: true
+    tty: true
+    restart: on-failure
+  
+  #Frontend 
+  frontend_EE:
+    build: ./BTP_Frontend
+    image: btp-frontend-compose
+    ports:
+      - 3001:8004
+    stdin_open: true
+
+volumes: 
+  db-config-EE:
+  db-data-EE:
+
+
+
+
+

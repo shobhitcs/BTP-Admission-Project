@@ -1,0 +1,8 @@
+/node_modules
+/ApplicantData_withCOAPcorr_maxGateRoll.xlsx
+/Screenshot 2022-09-02 124317.jpg
+/Screenshot 2022-09-02 124436.jpg
+/files/*
+!/files/
+/*.xlsx
+.env

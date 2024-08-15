@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  #Database with two volumes  
+  mysqldb_MECH:
+    image: mysql:8.0.30
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1
+    environment:
+      - MYSQL_DATABASE=Applicants2023_MECH
+      - MYSQL_PASSWORD=Your_Password
+      - MYSQL_ROOT_PASSWORD=Your_Password
+      - MYSQL_HOSTNAME=mysqldb_MECH
+    ports:
+      - 5545:3306
+    volumes: 
+      - db-config-MECH:/etc/mysql
+      - db-data:-MECH/var/lib/mysql
+  
+  #Backend with one volume to store files folder  
+  backend_MECH:
+    build: ./BTP_Backend
+    image: btp-backend-compose
+    environment:
+      - MYSQL_DATABASE=Applicants2023_MECH
+      # Note that the MYSQL_PASSWORD should be same as MYSQL_ROOT_PASSWORD here
+      - MYSQL_PASSWORD=Your_Password
+      - MYSQL_ROOT_PASSWORD=Your_Password
+      - MYSQL_HOSTNAME=mysqldb_MECH
+    depends_on:
+      - mysqldb_MECH
+    ports:
+      - 4446:4444
+    volumes: 
+      - ./backend-MECH-files:/usr/src/app/files
+      - ./backend-MECH-files/generatedOffers:/usr/src/app/files/generatedOffers
+      - ./backend-MECH-files/roundUpdates:/usr/src/app/files/roundUpdates
+    stdin_open: true
+    tty: true
+    restart: on-failure
+  
+  #Frontend 
+  frontend_MECH:
+    build: ./BTP_Frontend
+    image: btp-frontend-compose
+    ports:
+      - 3002:8004
+    stdin_open: true
+
+volumes: 
+  db-config-MECH:
+  db-data-MECH:
+
+
+
+
+
