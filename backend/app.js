@@ -2,6 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
 var cors = require("cors");
+const morgan=require('morgan');
 const port = 4444;
 const initialiseDatabaseRoutes = require("./routes/initialiseDatabase");
 const seatMatrixRoutes = require("./routes/seatMatrix");
@@ -17,25 +18,43 @@ const adminCheckRoutes = require("./routes/adminCheckRoutes");
 const authenticationRouter = require("./routes/authenticationRouter");
 const addBranchRoute = require("./routes/addBranchRoute");
 const deleteBranchRoute = require("./routes/deleteBranchRoute");
+const connection = require("./config/dbConfig");
+
 
 require("dotenv").config();
+app.use(morgan('dev'))
 // app.use(cors());
 
-app.use(
-  cors({
-    origin: [process.env.NODE_ENV !== "production" && process.env.BACKEND_URL],
-    credentials: true,
-  })
-);
-
-app.use(express.json());
-app.use(cookieParser());
 // app.use(
 //   cors({
-//     origin: [process.env.NODE_ENV !== "production" && "http://localhost:8004"],
+//     origin: [process.env.NODE_ENV !== "production" && process.env.BACKEND_URL],
 //     credentials: true,
 //   })
 // );
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(cookieParser());
+// app.use((req, res, next) => {
+//   console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  
+//   // Log headers
+//   console.log('Headers:', req.headers);
+  
+//   // Log query parameters
+//   console.log('Query Parameters:', req.query);
+  
+//   // Log request body (requires body parsing middleware, like express.json())
+//   console.log('Body:', req.body);
+  
+//   // Proceed to the next middleware or route handler
+//   next();
+// });
 
 (async () => {
   try {
@@ -43,6 +62,19 @@ app.use(cookieParser());
     const plainPassword = process.env.ADMIN_PASSWORD;
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(plainPassword, salt);
+    // connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.MYSQL_DATABASE}`, function (error, results, fields) {
+    //   // if (error) throw error;
+    //   console.log('Database created or already exists.');
+    //   // console.log(process.env.MYSQL_DATABASE);
+    // });
+    // connection.query(`USE ${process.env.MYSQL_DATABASE}`, function (error, results, fields) {
+    //   if (error) {
+    //     console.error('Error selecting database:', error.message);
+    //   } else {
+    //     console.log(`Successfully selected the database '${process.env.MYSQL_DATABASE}'.`);
+    //   }});
+    // // console.log(`Database '${process.env.MYSQL_DATABASE}' selected.`);
+    
     await initializeBranchTable(process.env.MYSQL_DATABASE, [["admin"]]);
     await initializeUsersTable(process.env.MYSQL_DATABASE, [
       [1, user, hashedPassword, "admin", true],
@@ -103,14 +135,17 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  console.log("hello");
   res.send("Home page of Mtech Application site!");
 });
 
 app.listen(port, () => {
-  console.log(process.env.MYSQL_ROOT_PASSWORD);
-  console.log(process.env.MYSQL_DATABASE);
-  console.log(process.env.MYSQL_PASSWORD);
-  console.log(process.env.MYSQL_HOSTNAME);
+  // console.log("---------------------------------")
+  // console.log(process.env.MYSQL_ROOT_PASSWORD);
+  // console.log(process.env.MYSQL_DATABASE);
+  // console.log(process.env.MYSQL_PASSWORD);
+  // console.log(process.env.MYSQL_HOSTNAME);
+  // console.log("---------------------------------")
 
   console.log(`Example app listening on port ${port}`);
 });

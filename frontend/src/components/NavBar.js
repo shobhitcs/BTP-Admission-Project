@@ -27,7 +27,7 @@ function NavBar(props) {
       const jwtToken = getCookie("jwtToken");
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/check-authentication/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/check-authentication`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
@@ -37,8 +37,8 @@ function NavBar(props) {
             withCredentials: true,
           }
         );
+        // console.log("the response is: ", response.data);
         if (response.data.isAuthenticated) {
-          // console.log("the response is: ", response.data);
           setAuth({
             token: true,
             username: response.data.username,
@@ -50,7 +50,7 @@ function NavBar(props) {
           setAuth({ token: false });
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        console.error("Error checking authentication");
         setAuth({ token: false });
       }
     };

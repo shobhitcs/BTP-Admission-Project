@@ -9,4 +9,5 @@ const connection = mysql.createConnection({
   debug: false,
   insecureAuth: true,
 });
+
 module.exports = connection;
