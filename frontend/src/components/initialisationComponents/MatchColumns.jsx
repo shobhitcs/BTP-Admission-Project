@@ -4,7 +4,7 @@ import { applicantsSchemaColumnNames } from "./columnNames";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SelectBox from "./SelectBox";
 import axios from "axios";
-import { serverLink } from "../../serverLink";
+// import { serverLink } from "../../serverLink";
 import Loader from "../Loader";
 import DownloadIcon from "@mui/icons-material/Download";
 import documentImage from "../../images/docmentimage.jpg";
@@ -37,6 +37,7 @@ const MatchColumns = () => {
         }
       )
       .then((res) => {
+        console.log(res.data.result);
         setFileExists(res.data.result);
         setIsLoading(false);
       })
@@ -59,6 +60,7 @@ const MatchColumns = () => {
 
   const getMatchedColumnNames = async () => {
     setIsLoading(true);
+    console.log('jello');
     try {
       const jwtToken = getCookie("jwtToken");
       const response = await axios.get(
@@ -72,6 +74,7 @@ const MatchColumns = () => {
           withCredentials: true,
         }
       );
+      console.log(response.data.result);
       setColumnNamesMatched(response.data.result);
       setIsLoading(false);
     } catch (error) {
