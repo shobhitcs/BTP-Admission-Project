@@ -26,8 +26,9 @@ function NavBar(props) {
     const checkAuthentication = async () => {
       const jwtToken = getCookie("jwtToken");
       try {
+        // console.log("check -auth");
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/check-authentication`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/check-authentication/`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
