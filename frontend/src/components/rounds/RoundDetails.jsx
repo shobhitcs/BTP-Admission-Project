@@ -1,31 +1,30 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { serverLink } from "../../serverLink";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RoundUpdateFiles from "./RoundUpdateFiles";
-import { Button } from "@mui/material";
+import { Button, Snackbar, Alert } from "@mui/material";
 import Download from "@mui/icons-material/Download";
 import Loader from "../Loader";
 import fileDownload from "js-file-download";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function RoundDetails(props) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [offersGenerated, setOffersGenerated] = useState(false);
+  const [roundStatus, setRoundstatus] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [offersGenerated, setOffersGenerated] = useState(false);
-  // const [updatedStatus,setUpdatedStatus]=useState(false);
-  const [roundStatus, setRoundstatus] = useState(null);
-  const generateoffers = async () => {
+  const generateOffers = async () => {
     try {
       setIsLoading(true);
       const jwtToken = getCookie("jwtToken");
-      let res = await axios.get(
+      await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/rounds/generateOffers/${props.roundNumber}`,
         {
           headers: {
@@ -36,24 +35,12 @@ function RoundDetails(props) {
           withCredentials: true,
         }
       );
-
       window.location.reload();
     } catch (error) {
       console.log(error);
-      // alert(error.response.data.result);
-      toast.error(error.response.data.result, {
-        position: "top-center",
-        autoClose: true, // Do not auto-close
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          // Handle closing event
-          // console.log("User closed the notification");
-        },
-      });
+      setSnackbarMessage(error.response.data.result || "Failed to generate offers");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       setIsLoading(false);
     }
   };
@@ -74,11 +61,8 @@ function RoundDetails(props) {
             withCredentials: true,
           }
         )
-
         .then((res) => {
-          // console.log(res.data.result);
           setOffersGenerated(res.data.result.offersGenerated);
-          // setUpdatedStatus(res.data.result.updatedRound);
           setRoundstatus(res.data.result);
           setIsLoading(false);
         })
@@ -88,7 +72,7 @@ function RoundDetails(props) {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [props.roundNumber]);
 
   const handleDownloadOffersFile = () => {
     try {
@@ -106,45 +90,40 @@ function RoundDetails(props) {
             withCredentials: true,
           }
         )
-
         .then((res) => {
-          // console.log(res);s
           fileDownload(res.data, `round${props.roundNumber}.xlsx`);
         })
         .catch((err) => {
           console.log(err);
+          setSnackbarMessage("Failed to download file");
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
         });
     } catch (error) {
       console.error(error);
+      setSnackbarMessage("Failed to download file");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
     <div className="w-full h-auto flex justify-center items-center">
-      <ToastContainer />
       {isLoading && <Loader />}
       {!isLoading && (
         <div className="w-full flex flex-col justify-center items-center h-auto p-3">
           <div className="flex w-[95%] border-2 h-[60px] mt-5 items-center justify-between p-3 bg-zinc-50 shadow-md rounded-md">
-            {!offersGenerated && (
-              <p className="text-xl text-[#1B3058]">Generate Offers</p>
-            )}
-            {offersGenerated && (
-              <p className="text-xl text-[#1B3058]">
-                Offers Have Been Generated
-              </p>
-            )}
+            <p className="text-xl text-[#1B3058]">
+              {offersGenerated ? "Offers Have Been Generated" : "Generate Offers"}
+            </p>
             <div className="flex w-[70%] justify-end items-center gap-5">
-              {!offersGenerated && (
-                <Button variant="contained" onClick={generateoffers}>
-                  Generate
-                </Button>
-              )}
-              {offersGenerated && (
-                <Button variant="contained" onClick={generateoffers}>
-                  Regenerate
-                </Button>
-              )}
+              <Button variant="contained" onClick={generateOffers}>
+                {offersGenerated ? "Regenerate" : "Generate"}
+              </Button>
               {offersGenerated && (
                 <Button
                   variant="contained"
@@ -162,7 +141,7 @@ function RoundDetails(props) {
               Updates From Round
             </h1>
 
-            {roundStatus != null && offersGenerated && (
+            {roundStatus && offersGenerated && (
               <div className="flex flex-col justify-center items-center w-[95%]  h-auto box-border p-3 rounded-md gap-2 border-2">
                 <RoundUpdateFiles
                   fileName={"IITGCandidateDecision"}
@@ -186,12 +165,9 @@ function RoundDetails(props) {
                   isPresent={roundStatus.ConsolidatedFile}
                   roundNumber={props.roundNumber}
                 />
-                {roundStatus != null && !offersGenerated && (
-                  <p>Offers Not Generated</p>
-                )}
               </div>
             )}
-            {roundStatus != null && !offersGenerated && (
+            {roundStatus && !offersGenerated && (
               <div className="flex flex-col justify-center items-center w-[95%]  h-auto box-border p-3 shadow-md rounded-md gap-2">
                 <p className="text-2xl text-red-500">Please Generate Offers</p>
               </div>
@@ -199,6 +175,15 @@ function RoundDetails(props) {
           </div>
         </div>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

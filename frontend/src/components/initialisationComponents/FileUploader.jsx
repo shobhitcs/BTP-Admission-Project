@@ -2,21 +2,20 @@ import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-// import { serverLink } from "../../serverLink";
 import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
-// import Cookies from "js-cookie";
-// import Alert from "@mui/material/Alert";
+import { Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function FileUploader(props) {
   const [file, setFile] = useState(null);
   const [fileExists, setFileExists] = useState(false);
   const [loading, setIsLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
   const navigate = useNavigate();
 
   function getCookie(name) {
@@ -61,19 +60,9 @@ function FileUploader(props) {
   const handleFileSubmit = (e) => {
     const file = e.target.files[0];
     if (file.name.split(".").pop() !== "xlsx") {
-      toast.error("Invalid file type, please upload an xlsx file", {
-        position: "top-center",
-        autoClose: true, // Do not auto-close
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          // Handle closing event
-          console.log("Wrong file uploaded.");
-        },
-      });
+      setAlertMessage("Invalid file type, please upload an xlsx file");
+      setAlertSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
     setFile(file);
@@ -83,78 +72,33 @@ function FileUploader(props) {
     const formData = new FormData();
     formData.append("name", file.name);
     formData.append("file", file);
-    // console.log("inside here");
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/initialise/getFile`,
         formData,
         { withCredentials: true }
       );
 
-      toast.success("File Upload success", {
-        position: "top-center",
-        autoClose: true, // Do not auto-close
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          // Handle closing event
-          console.log("File Uploaded....");
-          // Reload the window
-          window.location.reload();
-        },
-      });
-      // <Alert severity="success">File upload successful</Alert>;
-      // <Alert severity="success" color="warning">
-      //   This is a success Alert with warning colors.
-      // </Alert>;
+      setAlertMessage("File upload successful");
+      setAlertSeverity("success");
+      setSnackbarOpen(true);
+      window.location.reload();
     } catch (error) {
       console.error("Upload error:", error);
-      // console.log("the error, ", error.response);
-      // console.log("the error, ", error.response.status);
       if (error.response && error.response.status === 401) {
-        toast.error(
-          "File upload failed. Please log in with correct credentials.",
-          {
-            position: "top-center",
-            autoClose: true, // Do not auto-close
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            onClose: () => {
-              // Handle closing event
-              console.log("File Upload failed....");
-              // Reload the window
-            },
-          }
-        );
+        setAlertMessage("File upload failed. Please log in with correct credentials.");
       } else {
-        toast.error("File upload failed.", {
-          position: "top-center",
-          autoClose: true, // Do not auto-close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            // Handle closing event
-            console.log("File Upload failed....");
-            // Reload the window
-          },
-        });
+        setAlertMessage("File upload failed.");
       }
+      setAlertSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
   const handleDownload = async () => {
     try {
-      const token = getCookie("jwtToken"); // Get the JWT token from wherever it's stored (cookies, local storage, etc.)
+      const token = getCookie("jwtToken"); 
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/initialise/uploadedFile`,
         {
@@ -165,11 +109,14 @@ function FileUploader(props) {
           withCredentials: true,
         }
       );
-      // console.log(response);
       fileDownload(response.data, "uploadedFile.xlsx");
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -241,6 +188,19 @@ function FileUploader(props) {
           Download the Uploaded File
         </Button>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

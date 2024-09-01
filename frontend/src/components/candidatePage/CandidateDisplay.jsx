@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { serverLink } from "../../serverLink";
 import Loader from "../Loader";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { Button } from "@mui/material";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Button, Snackbar, Alert } from "@mui/material";
 
 function CandidateDisplay(props) {
   function getCookie(name) {
@@ -20,8 +17,19 @@ function CandidateDisplay(props) {
   const { coapid } = useParams();
   const [status, setStatus] = React.useState("");
   const row1 = ["FullName", "ApplicationNumber", "COAP"];
+
+  // for alerts
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleChange = (event) => {
     setStatus(event.target.value);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -48,19 +56,8 @@ function CandidateDisplay(props) {
         })
         .catch((err) => {
           console.log(err);
-          toast.error(err.message, {
-            position: "top-center",
-            autoClose: false, // Do not auto-close
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            onClose: () => {
-              // Handle closing event
-              console.log("User closed the notification");
-            },
-          });
+          setErrorMessage(err.message);
+          setOpen(true);
           setIsLoading(false);
         });
     } catch (error) {
@@ -93,7 +90,6 @@ function CandidateDisplay(props) {
 
   return (
     <div className="w-full">
-      <ToastContainer />
       {!isLoading && (
         <div className="flex flex-col w-[90%] justify-center items-center mt-10 m-auto">
           <div className="w-full  bg-[#1B3058] text-white h-14 flex justify-center items-center text-2xl">
@@ -172,6 +168,11 @@ function CandidateDisplay(props) {
         </div>
       )}
       {isLoading && <Loader />}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

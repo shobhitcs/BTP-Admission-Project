@@ -11,17 +11,15 @@ import FilterOptions from "./components/search/FilterOptions";
 import CandidateDisplay from "./components/candidatePage/CandidateDisplay";
 import AdminPanel from "./components/login/AdminPanel.jsx";
 import LoginForm from "./components/login/LoginForm.jsx";
-import { useState, useEffect } from "react";
 import NotFound from "./components/NotFound.js";
-import axios from "axios";
 import ProtectedRoutes from "./components/protectedRoute/ProtectedRoute.js";
 import ProtectedRoutesAdmin from "./components/protectedRoute/ProtectedRouteAdmin.js";
 import ProtectedRoutesLogin from "./components/protectedRoute/ProtectedRoutesLogin.js";
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // const [isAdmin, setIsAdmin] = useState(true);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [loading, setLoading] = useState(true);
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DeleteIcon from "@material-ui/icons/Delete";
-import SearchIcon from "@material-ui/icons/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Container,
   Typography,
@@ -21,8 +21,8 @@ import {
   TableBody,
   InputAdornment,
   Snackbar,
-} from "@material-ui/core";
-import { AddCircle, Visibility, VisibilityOff } from "@material-ui/icons";
+} from "@mui/material";
+import { AddCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 

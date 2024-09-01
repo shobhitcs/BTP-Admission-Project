@@ -1,46 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Typography,
-  Paper,
-  TextField,
-  Button,
-  IconButton,
-  InputAdornment,
-  makeStyles,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-  Checkbox,
-  FormControlLabel,
-} from "@material-ui/core";
-import {
-  LockOutlined as LockOutlinedIcon,
-  Visibility,
-  VisibilityOff,
-} from "@material-ui/icons";
+import { Container, Typography, Paper, TextField, Button, IconButton, InputAdornment, MenuItem, FormControl, Select, InputLabel, Checkbox, FormControlLabel, Box } from "@mui/material";
+import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    padding: theme.spacing(4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
 function LoginForm() {
   function getCookie(name) {
@@ -48,7 +10,6 @@ function LoginForm() {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
-  const classes = useStyles();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -78,11 +39,9 @@ function LoginForm() {
             withCredentials: true,
           }
         );
-        // console.log("the response is: ", response.data);
         navigate("/home");
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // console.log("User is not authenticated. Navigating to '/'...");
           navigate("/");
         } else {
           console.error("Error checking authentication:", error);
@@ -108,17 +67,14 @@ function LoginForm() {
   }, []);
 
   const handleSubmit = async () => {
-    // Trim the username before submitting
     const trimmedUsername = username.trim();
 
-    // Validate inputs
     if (!trimmedUsername || !password) {
       setError("Please fill in all fields.");
       return;
     }
 
     try {
-      // Make API call to login
       const loginResponse = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
         {
@@ -139,12 +95,8 @@ function LoginForm() {
         throw new Error("Invalid credentials");
       }
 
-      // Handle successful login
-      // console.log("Login successful. JWT token:", loginResponse.data.token);
-      // Redirect to home page
       navigate("/home");
     } catch (error) {
-      // Handle login error
       console.error("Login failed:", error.message);
       setError("Invalid username or password.");
     }
@@ -152,7 +104,16 @@ function LoginForm() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Paper elevation={3} className={classes.paper}>
+      <Paper
+        elevation={3}
+        sx={{
+          marginTop: 8,
+          padding: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <LockOutlinedIcon color="primary" fontSize="large" />
         <Typography component="h1" variant="h5">
           Login
@@ -162,7 +123,14 @@ function LoginForm() {
             {error}
           </Typography>
         )}
-        <form className={classes.form} noValidate>
+        <Box
+          component="form"
+          noValidate
+          sx={{
+            width: "100%",
+            marginTop: 1,
+          }}
+        >
           <TextField
             variant="outlined"
             margin="normal"
@@ -195,7 +163,7 @@ function LoginForm() {
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
               label="Branch"
-              disabled={isAdmin} // Disable the Branch field if isAdmin is true
+              disabled={isAdmin}
             >
               {branches.map((branch) => (
                 <MenuItem key={branch} value={branch}>
@@ -219,12 +187,15 @@ function LoginForm() {
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            sx={{
+              marginTop: 3,
+              marginBottom: 2,
+            }}
             onClick={handleSubmit}
           >
             Login
           </Button>
-        </form>
+        </Box>
       </Paper>
     </Container>
   );

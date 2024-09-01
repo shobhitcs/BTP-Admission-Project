@@ -1,13 +1,9 @@
-import { Autocomplete, Button, TextField } from "@mui/material";
-import React, { useEffect } from "react";
+import { Autocomplete, Button, TextField, Snackbar, Alert } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-
-import { serverLink } from "../../serverLink";
 import Search from "@mui/icons-material/Search";
 import FilteredCandidatesTable from "./FilteredCandidatesTable";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function FilterOptions(props) {
   function getCookie(name) {
@@ -15,6 +11,7 @@ function FilterOptions(props) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
+
   const navigate = useNavigate();
   const genderLabels = [{ label: "Male" }, { label: "Female" }];
   const CategoryLabels = [
@@ -23,12 +20,21 @@ function FilterOptions(props) {
     { label: "SC" },
     { label: "ST" },
   ];
-  const [data, setData] = React.useState([]);
-  const [coapId, setcoapId] = React.useState(null);
-  const [gender, setGender] = React.useState(null);
-  const [category, setCategory] = React.useState(null);
-  const [coapIds, setCoapIds] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+
+  const [data, setData] = useState([]);
+  const [coapId, setcoapId] = useState(null);
+  const [gender, setGender] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [coapIds, setCoapIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -46,23 +52,15 @@ function FilterOptions(props) {
         })
         .then((res) => {
           setCoapIds(res.data.result);
-          // console.log(res.data.result);
           setIsLoading(false);
         })
         .catch((err) => {
-          // console.log(err);
           if (err.response && err.response.status === 401) {
             navigate("/");
           } else {
-            toast.error(err.message, {
-              position: "top-center",
-              autoClose: true, // Do not auto-close
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
+            setSnackbarMessage(err.message);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
           }
           setIsLoading(false);
         });
@@ -70,7 +68,7 @@ function FilterOptions(props) {
       console.error(error);
       setIsLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   const getData = () => {
     setIsLoading(true);
@@ -92,30 +90,22 @@ function FilterOptions(props) {
         )
         .then((res) => {
           setData(res.data.result);
-          // console.log(res.data.result);
           setIsLoading(false);
         })
         .catch((err) => {
-          // console.log(err);
-          toast.error(err.message, {
-            position: "top-center",
-            autoClose: true, // Do not auto-close
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          setSnackbarMessage(err.message);
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
           setIsLoading(false);
         });
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex flex-col w-full justify-start items-center  h-fit">
-      <ToastContainer />
       <div className="w-full flex justify-center">
         <p className="text-3xl text-gray-400">Search</p>
       </div>
@@ -169,6 +159,19 @@ function FilterOptions(props) {
         <p className="text-3xl text-gray-400">Filtered Results</p>
       </div>
       <FilteredCandidatesTable data={data} />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

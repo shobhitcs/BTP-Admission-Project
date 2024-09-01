@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
+import { Snackbar, Alert } from "@mui/material";
 import { applicantsSchemaColumnNames } from "./columnNames";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SelectBox from "./SelectBox";
 import axios from "axios";
-// import { serverLink } from "../../serverLink";
 import Loader from "../Loader";
 import DownloadIcon from "@mui/icons-material/Download";
 import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const MatchColumns = () => {
   function getCookie(name) {
@@ -22,6 +20,10 @@ const MatchColumns = () => {
   const [columnNamesMatched, setColumnNamesMatched] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileExists, setFileExists] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
+
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -51,16 +53,13 @@ const MatchColumns = () => {
     uploadedcolumnName,
     selectedColumnName
   ) => {
-    var prevState = columnNamesMatched;
-    // console.log(uploadedcolumnName,selectedColumnName,columnNamesMatched)
+    const prevState = columnNamesMatched;
     prevState[uploadedcolumnName] = selectedColumnName;
-    setColumnNamesMatched(prevState);
-    // console.log(uploadedcolumnName,selectedColumnName,columnNamesMatched)
+    setColumnNamesMatched({ ...prevState });
   };
 
   const getMatchedColumnNames = async () => {
     setIsLoading(true);
-    console.log('jello');
     try {
       const jwtToken = getCookie("jwtToken");
       const response = await axios.get(
@@ -78,26 +77,7 @@ const MatchColumns = () => {
       setColumnNamesMatched(response.data.result);
       setIsLoading(false);
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.result === "You haven't uploaded the file"
-      ) {
-        toast.error(error.response.data.result, {
-          position: "top-center",
-          autoClose: true, // Do not auto-close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            // Handle closing event
-            console.log("User closed the notification");
-          },
-        });
-      }
-      console.log(error);
+      handleErrorResponse(error, "You haven't uploaded the file");
       setIsLoading(false);
     }
   };
@@ -110,39 +90,12 @@ const MatchColumns = () => {
           count++;
         }
       }
-      // console.log(actualColumnName,count)
       if (count >= 2) {
-        const error_message = `${actualColumnName} is Selected Twice`;
-        toast.error(error_message, {
-          position: "top-center",
-          autoClose: true, // Do not auto-close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            // Handle closing event
-            console.log("User closed the notification");
-          },
-        });
+        handleError(`${actualColumnName} is Selected Twice`);
         return;
       }
       if (count === 0) {
-        const error_message = `${actualColumnName} is Not Selected `;
-        toast.error(error_message, {
-          position: "top-center",
-          autoClose: true, // Do not auto-close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            // Handle closing event
-            console.log("User closed the notification");
-          },
-        });
+        handleError(`${actualColumnName} is Not Selected`);
         return;
       }
     }
@@ -161,27 +114,14 @@ const MatchColumns = () => {
         }
       )
       .then((res) => {
-        // console.log(res);
         window.location.reload();
       })
       .catch((err) => {
-        toast.error(err.response.data.result, {
-          position: "top-center",
-          autoClose: true, // Do not auto-close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            // Handle closing event
-            console.log("User closed the notification");
-          },
-        });
-        console.log(err);
+        handleErrorResponse(err);
         setIsLoading(false);
       });
   };
+
   const handleDownload = () => {
     try {
       const jwtToken = getCookie("jwtToken");
@@ -197,41 +137,33 @@ const MatchColumns = () => {
           }
         )
         .then((res) => {
-          // console.log(res);
           fileDownload(res.data, "modifiedFile.xlsx");
         })
         .catch((err) => {
-          toast.error(err.response.data.result, {
-            position: "top-center",
-            autoClose: true, // Do not auto-close
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            onClose: () => {
-              // Handle closing event
-              console.log("User closed the notification");
-            },
-          });
+          handleErrorResponse(err);
         });
     } catch (error) {
       console.error("Error:", error);
-
-      toast.error("Failed to download file.", {
-        position: "top-center",
-        autoClose: true, // Do not auto-close
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          // Handle closing event
-          console.log("User closed the notification");
-        },
-      });
+      handleError("Failed to download file.");
     }
+  };
+
+  const handleErrorResponse = (error, defaultMessage) => {
+    const message =
+      (error.response && error.response.data && error.response.data.result) ||
+      defaultMessage ||
+      "An error occurred";
+    handleError(message);
+  };
+
+  const handleError = (message) => {
+    setAlertMessage(message);
+    setAlertSeverity("error");
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -311,6 +243,20 @@ const MatchColumns = () => {
           </Button>
         )}
       </div>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

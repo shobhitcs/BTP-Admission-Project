@@ -7,12 +7,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import SeatMatrixRow from "./SeatMatrixRow";
-import { serverLink } from "../../serverLink";
 import Loader from "../Loader";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Snackbar, Alert } from "@mui/material";
 
 function SeatMatrix(props) {
   const navigate = useNavigate();
@@ -23,6 +21,15 @@ function SeatMatrix(props) {
   }
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
+
+  // Snackbar states
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,23 +49,15 @@ function SeatMatrix(props) {
         )
         .then((res) => {
           setData(res.data.result);
-          // console.log(res.data.result);
           setIsLoading(false);
         })
         .catch((err) => {
-          // console.log(err);
           if (err.response && err.response.status === 401) {
             navigate("/");
           } else {
-            // console.log(err);
-            toast.error(err.response.data.error, {
-              position: "top-center",
-              autoClose: true,
-              hideProgressBar: false,
-              closeOnClick: true,
-              draggable: true,
-              progress: undefined,
-            });
+            setSnackbarMessage(err.response.data.error);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
           }
           setIsLoading(false);
         });
@@ -66,11 +65,10 @@ function SeatMatrix(props) {
       console.error(error);
       setIsLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="flex justify-center w-full flex-col items-center gap-10 mt-8 mb-8">
-      <ToastContainer />
       <div className="w-full flex justify-center">
         <p className="text-3xl text-gray-400">Seat Matrix</p>
       </div>
@@ -134,6 +132,19 @@ function SeatMatrix(props) {
           <Loader />
         </div>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

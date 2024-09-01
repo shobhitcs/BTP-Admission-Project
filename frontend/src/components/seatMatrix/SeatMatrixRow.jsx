@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import { Button, TextField } from "@mui/material";
-import { serverLink } from "../../serverLink";
+import { Button, TextField, Snackbar, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function SeatMatrixRow(props) {
   function getCookie(name) {
@@ -14,28 +11,25 @@ function SeatMatrixRow(props) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
+
   const [seats, setSeats] = useState(props.seatsAllocated);
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleChangeSeats = (e) => {
     setSeats(e.target.value);
   };
+
   const handleSave = async () => {
     if (seats < props.seatsBooked) {
-      toast.error("Seats booked are more than the seats allocated", {
-        position: "top-center",
-        autoClose: true, // Do not auto-close
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-
+      setErrorMessage("Seats booked are more than the seats allocated");
+      setOpen(true);
       return;
     }
 
     try {
       const jwtToken = getCookie("jwtToken");
-      const response = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/seatMatrix/updateSeats`,
         { category: props.category, seats: seats },
         {
@@ -47,45 +41,61 @@ function SeatMatrixRow(props) {
           withCredentials: true,
         }
       );
-      // console.log(response);
       window.location.reload();
     } catch (error) {
       console.log(error);
+      setErrorMessage("An error occurred while saving the data.");
+      setOpen(true);
     }
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
-    <TableRow
-      key={"key"}
-      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-    >
-      <TableCell
-        component="th"
-        scope="row"
-        style={{ fontSize: "15px", fontWeight: "bold", color: "#FFCB00" }}
+    <>
+      <TableRow
+        key={"key"}
+        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
-        {props.category}
-      </TableCell>
-      <TableCell align="center">{props.seatsAllocated}</TableCell>
-      <TableCell align="center">{props.seatsBooked}</TableCell>
-      <TableCell align="center">
-        <TextField
-          type="Number"
-          onChange={handleChangeSeats}
-          value={seats}
-        ></TextField>
-      </TableCell>
-      <TableCell align="center">
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          style={{ background: "#1B3058" }}
-          startIcon={<SaveIcon />}
+        <TableCell
+          component="th"
+          scope="row"
+          style={{ fontSize: "15px", fontWeight: "bold", color: "#FFCB00" }}
         >
-          Save
-        </Button>
-      </TableCell>
-    </TableRow>
+          {props.category}
+        </TableCell>
+        <TableCell align="center">{props.seatsAllocated}</TableCell>
+        <TableCell align="center">{props.seatsBooked}</TableCell>
+        <TableCell align="center">
+          <TextField
+            type="Number"
+            onChange={handleChangeSeats}
+            value={seats}
+          ></TextField>
+        </TableCell>
+        <TableCell align="center">
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            style={{ background: "#1B3058" }}
+            startIcon={<SaveIcon />}
+          >
+            Save
+          </Button>
+        </TableCell>
+      </TableRow>
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }
 

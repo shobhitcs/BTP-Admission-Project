@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from "axios";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
-import { Fab } from "@material-ui/core";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 
 const ProtectedRoutesLogin = () => {
   const [auth, setAuth] = useState({ token: false });

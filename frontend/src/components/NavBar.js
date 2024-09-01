@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../input.css";
 import iitgoalogo from "../images/Indian_Institute_of_Technology_Goa_Logo.svg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { IconButton, Tooltip } from "@material-ui/core";
+import { IconButton, Tooltip } from "@mui/material";
+
 import {
   ExitToApp as ExitToAppIcon,
   Person as PersonIcon,
   AccountBalance as AccountBalanceIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import axios from "axios";
 
