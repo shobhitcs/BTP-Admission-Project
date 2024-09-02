@@ -1,8 +1,8 @@
-import { Button, Snackbar, Alert } from "@mui/material";
+import React, { useState } from "react";
+import { Button, Snackbar, Alert, Typography, Box, Container } from "@mui/material";
 import FileUploader from "./FileUploader";
 import MatchColumns from "./MatchColumns";
 import axios from "axios";
-import React, { useState } from "react";
 
 function Initialise(props) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -47,35 +47,51 @@ function Initialise(props) {
   };
 
   return (
-    <div className="flex w-full justify-center flex-col items-center gap-6 p-8">
-      <div className="flex content-center justify-center w-full gap-6">
-        <p className="text-3xl text-gray-400">Initialise The DataBase</p>
-        <Button
-          variant="outlined"
-          onClick={handleReset}
-          style={{ color: "white", background: "red" }}
-        >
-          Reset
-        </Button>
-      </div>
-      <FileUploader />
-      <div className="h-[50px] border-2"></div>
-      <MatchColumns />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
+    <Container>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        gap={4}
+        padding={4}
       >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={alertSeverity}
-          sx={{ width: "100%" }}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={2}
+          width="100%"
         >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
-    </div>
+          <Typography variant="h4" color="textSecondary">
+            Initialise The DataBase
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={handleReset}
+            sx={{ color: "white", backgroundColor: "red", '&:hover': { backgroundColor: "darkred" } }}
+          >
+            Reset
+          </Button>
+        </Box>
+        <FileUploader />
+        <Box sx={{ height: 50, border: '2px solid' }} />
+        <MatchColumns />
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={alertSeverity}
+            sx={{ width: "100%" }}
+          >
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 }
 

@@ -1,13 +1,32 @@
 import React from "react";
+import { Box } from "@mui/material";
 
-function Footer(props) {
+function Footer() {
   return (
-    <div className="w-full flex justify-center items-center h-[60px] bg-[#303030] mt-auto">
-      <p className="text-xs text-gray-200 font-medium text-center">
-        Built under the supervision of
-        <b className="text-white"> Dr. Divya Padmanabhan, Dr. Satyanath Bhat</b>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 60,
+        backgroundColor: "#303030",
+        marginTop: "auto",
+        padding: "20px"
+      }}
+    >
+      <p
+        style={{
+          fontSize: "0.75rem",
+          fontWeight: "500",
+          color: "#bfbfbf",
+          textAlign: "center",
+        }}
+      >
+        Built under the supervision of{" "}
+        <b style={{ color: "white" }}>Dr. Divya Padmanabhan, Dr. Satyanath Bhat</b>
       </p>
-    </div>
+    </Box>
   );
 }
 

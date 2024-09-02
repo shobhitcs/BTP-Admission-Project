@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Paper, TextField, Button, IconButton, InputAdornment, MenuItem, FormControl, Select, InputLabel, Checkbox, FormControlLabel, Box } from "@mui/material";
-import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff} from "@mui/icons-material";
+import {
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+  Checkbox,
+  FormControlLabel,
+  Box,
+} from "@mui/material";
+import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function LoginForm() {
+  // Helper function to get cookie by name
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [branch, setBranch] = useState("");
@@ -103,23 +118,26 @@ function LoginForm() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <div style={{ padding: '10px', backgroundColor: '#ebf2f2', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
       <Paper
         elevation={3}
         sx={{
-          marginTop: 8,
-          padding: 4,
+          padding: 3,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
+          maxWidth: 350,
+          width: "100%",
+          fontFamily: 'Maven Pro, sans-serif',
         }}
       >
         <LockOutlinedIcon color="primary" fontSize="large" />
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{ fontFamily: 'Righteous, cursive', marginTop: 1 }}>
           Login
         </Typography>
         {error && (
-          <Typography variant="body2" color="error">
+          <Typography variant="body2" color="error" sx={{ fontFamily: 'Barlow, sans-serif', marginTop: 1 }}>
             {error}
           </Typography>
         )}
@@ -129,6 +147,7 @@ function LoginForm() {
           sx={{
             width: "100%",
             marginTop: 1,
+            fontFamily: 'Ubuntu, sans-serif'
           }}
         >
           <TextField
@@ -138,6 +157,7 @@ function LoginForm() {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            sx={{ fontFamily: 'Poppins, sans-serif', marginBottom: 1, }}
           />
           <TextField
             variant="outlined"
@@ -156,17 +176,19 @@ function LoginForm() {
                 </InputAdornment>
               ),
             }}
+            sx={{ fontFamily: 'Poppins, sans-serif', marginBottom: 1 }}
           />
-          <FormControl variant="outlined" margin="normal" fullWidth>
+          <FormControl variant="outlined" margin="normal" fullWidth sx={{ marginBottom: 1 }}>
             <InputLabel>Branch</InputLabel>
             <Select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
               label="Branch"
               disabled={isAdmin}
+              sx={{ fontFamily: 'Poppins, sans-serif' }}
             >
               {branches.map((branch) => (
-                <MenuItem key={branch} value={branch}>
+                <MenuItem key={branch} value={branch} sx={{ fontFamily: 'Poppins, sans-serif' }}>
                   {branch}
                 </MenuItem>
               ))}
@@ -181,6 +203,7 @@ function LoginForm() {
               />
             }
             label="Are you an admin?"
+            sx={{ fontFamily: 'Barlow, sans-serif', marginBottom: 2 }}
           />
           <Button
             type="button"
@@ -188,8 +211,7 @@ function LoginForm() {
             variant="contained"
             color="primary"
             sx={{
-              marginTop: 3,
-              marginBottom: 2,
+              fontFamily: 'Ubuntu, sans-serif'
             }}
             onClick={handleSubmit}
           >
@@ -197,7 +219,7 @@ function LoginForm() {
           </Button>
         </Box>
       </Paper>
-    </Container>
+    </div>
   );
 }
 

@@ -76,10 +76,10 @@ function Home(props) {
             }}>
               <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <StartSharpIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold', fontFamily: 'Maven Pro, sans-serif' }}>
                   Initialisation
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{fontFamily: 'Poppins, sans-serif'}}>
                   Initialise the database to generate offers
                 </Typography>
               </CardContent>
@@ -102,10 +102,10 @@ function Home(props) {
             }}>
               <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <ChairAltIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold', fontFamily: 'Maven Pro, sans-serif' }}>
                   Seat Matrix
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{fontFamily: 'Poppins, sans-serif'}}>
                   Number of seats in each category
                 </Typography>
               </CardContent>
@@ -128,10 +128,10 @@ function Home(props) {
             }}>
               <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <WifiProtectedSetupSharpIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold', fontFamily: 'Maven Pro, sans-serif' }}>
                   Rounds
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{fontFamily: 'Poppins, sans-serif'}}>
                   You can find your round details here
                 </Typography>
               </CardContent>
@@ -154,10 +154,10 @@ function Home(props) {
             }}>
               <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <SearchIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 'bold', fontFamily: 'Maven Pro, sans-serif' }}>
                   Search
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{fontFamily: 'Poppins, sans-serif'}}>
                   You can find and update candidate statuses
                 </Typography>
               </CardContent>

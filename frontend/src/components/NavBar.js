@@ -10,12 +10,11 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText,
 } from "@mui/material";
 import {
   ExitToApp as ExitToAppIcon,
-  Person as PersonIcon,
-  AccountBalance as AccountBalanceIcon,
+  // Person as PersonIcon,
+  // AccountBalance as AccountBalanceIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import axios from "axios";
@@ -137,25 +136,32 @@ function NavBar() {
   );
 
   return (
-    <AppBar position="fixed" sx={{ backgroundColor: "#303030" }}>
+    <AppBar position="fixed" sx={{ backgroundColor: "#303030", fontFamily: 'Ubuntu, sans serif' }}>
       <Toolbar>
         {auth.token && (
           <div style={{ display: "flex", alignItems: "center" }}>
-            <PersonIcon style={{ fontSize: 24, color: "white" }} />
-            <span style={{ color: "white", fontWeight: "bold", marginLeft: "8px" }}>
+            {/* <PersonIcon style={{ fontSize: 24, color: "white" }} /> */}
+            Hi, 
+            <span style={{ color: "white", marginLeft: "8px" }}>
               {auth.username}
             </span>
 
             {!auth.isAdmin && (
               <>
-                <AccountBalanceIcon
+                {/* <AccountBalanceIcon
                   style={{ fontSize: 24, color: "white", marginLeft: "10px" }}
-                />
-                <span style={{ color: "white", fontWeight: "bold", marginLeft: "8px" }}>
-                  {auth.branch}
+                /> */}
+                   
+                <span style={{ color: "white", marginLeft: "8px" }}>
+                Dept. {auth.branch}
                 </span>
               </>
             )}
+          </div>
+        )}
+        {!auth.token && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            M. Tech Admission Portal
           </div>
         )}
 
@@ -171,7 +177,7 @@ function NavBar() {
             </Drawer>
           </>
         ) : (
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", fontFamily : 'Monda, sans serif' }}>
             {auth.token ? (
               <>
                 {!auth.isAdmin && (
@@ -220,13 +226,9 @@ function NavBar() {
                 </Tooltip>
               </>
             ) : (
-              <NavLink to="/" style={({ isActive }) => ({
-                color: isActive ? "blue" : "white",
-                textDecoration: 'none',
-              })}>
-                <span>Login</span>
-              </NavLink>
-            )}
+              <></>
+            )
+            }
           </div>
         )}
       </Toolbar>
