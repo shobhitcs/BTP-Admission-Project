@@ -1,7 +1,7 @@
 import "./App.css";
 import NavBar from "./components/NavBar";
 import "./input.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Initialise from "./components/initialisationComponents/Initialise";
 import SeatMatrix from "./components/seatMatrix/SeatMatrix.jsx";
 import Footer from "./components/Footer";

@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from "react";
-import "../input.css";
-import iitgoalogo from "../images/Indian_Institute_of_Technology_Goa_Logo.svg";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { IconButton, Tooltip } from "@mui/material";
-
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import {
   ExitToApp as ExitToAppIcon,
   Person as PersonIcon,
   AccountBalance as AccountBalanceIcon,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
-
 import axios from "axios";
 
-function NavBar(props) {
+function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [auth, setAuth] = useState({ token: false });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -27,7 +38,6 @@ function NavBar(props) {
     const checkAuthentication = async () => {
       const jwtToken = getCookie("jwtToken");
       try {
-        // console.log("check -auth");
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/api/check-authentication/`,
           {
@@ -39,7 +49,6 @@ function NavBar(props) {
             withCredentials: true,
           }
         );
-        // console.log("the response is: ", response.data);
         if (response.data.isAuthenticated) {
           setAuth({
             token: true,
@@ -48,7 +57,6 @@ function NavBar(props) {
             isAdmin: response.data.isAdmin,
           });
         } else {
-          // console.log("Not Authenticated");
           setAuth({ token: false });
         }
       } catch (error) {
@@ -71,14 +79,10 @@ function NavBar(props) {
           },
         }
       );
-      console.log("response", response);
       if (response.status === 200) {
-        // Remove JWT token from localStorage
         localStorage.removeItem("jwtToken");
-        // Signout successful, redirect to login page
         navigate("/");
       } else {
-        // Handle signout error
         console.error("Signout failed:", response.statusText);
       }
     } catch (error) {
@@ -86,91 +90,147 @@ function NavBar(props) {
     }
   };
 
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+      return;
+    }
+    setDrawerOpen(open);
+  };
+
+  const drawerItems = (
+    <div
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        <ListItem>
+          <NavLink to="/home" style={({ isActive }) => ({ color: isActive ? "blue" : "black", textDecoration: 'none' })}>
+            <span>Home</span>
+          </NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/initialise" style={({ isActive }) => ({ color: isActive ? "blue" : "black", textDecoration: 'none' })}>
+            <span>Initialisation</span>
+          </NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/seatMatrix" style={({ isActive }) => ({ color: isActive ? "blue" : "black", textDecoration: 'none' })}>
+            <span>Seat Matrix</span>
+          </NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/rounds" style={({ isActive }) => ({ color: isActive ? "blue" : "black", textDecoration: 'none' })}>
+            <span>Rounds</span>
+          </NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/search" style={({ isActive }) => ({ color: isActive ? "blue" : "black", textDecoration: 'none' })}>
+            <span>Search</span>
+          </NavLink>
+        </ListItem>
+        <ListItem onClick={handleSignOut}>
+          <span>Logout</span>
+        </ListItem>
+      </List>
+    </div>
+  );
+
   return (
-    <nav className="flex justify-start items-center h-20 box shadow-md  px-8 gap-8 bg-[#1B3058] w-full">
-      <Link to="/home">
-        <div className=" h-full flex justify-center items-center gap-2 ">
-          <img
-            src={iitgoalogo}
-            alt={"not found"}
-            className=" shadow-lg bg-white"
-            style={{ width: "70px", height: "70px", borderRadius: "50%" }}
-          ></img>
-          <div className="flex justify-center items-center">
-            <p className="text-xl text-white">IIT Goa</p>
-          </div>
-        </div>
-      </Link>
-      {auth.token && (
-        <div className="flex items-center">
-          <PersonIcon style={{ fontSize: 24, color: "white" }} />
-          <div className="text-white font-bold text-lg ml-2">
-            {auth.username}
-          </div>
+    <AppBar position="fixed" sx={{ backgroundColor: "#303030" }}>
+      <Toolbar>
+        {auth.token && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <PersonIcon style={{ fontSize: 24, color: "white" }} />
+            <span style={{ color: "white", fontWeight: "bold", marginLeft: "8px" }}>
+              {auth.username}
+            </span>
 
-          {!auth.isAdmin && (
-            <>
-              <AccountBalanceIcon
-                style={{ fontSize: 24, color: "white", marginLeft: "10px" }}
-              />
-              <div className="text-white font-bold text-lg ml-2">
-                {auth.branch}
-              </div>
-            </>
-          )}
-        </div>
-      )}
+            {!auth.isAdmin && (
+              <>
+                <AccountBalanceIcon
+                  style={{ fontSize: 24, color: "white", marginLeft: "10px" }}
+                />
+                <span style={{ color: "white", fontWeight: "bold", marginLeft: "8px" }}>
+                  {auth.branch}
+                </span>
+              </>
+            )}
+          </div>
+        )}
 
-      {auth.token && (
-        <div className="w-[fit-content] h-full flex justify-center items-center gap-4 ml-auto">
-          {auth.isAdmin ? null : (
-            <>
-              <Link to="/home">
-                <button className="flex h-full p-2 justify-center items-center hover:border-b-4">
-                  <p className="text-lg text-white">Home</p>
-                </button>
-              </Link>
-              <Link to="/initialise">
-                <button className="flex h-full p-2 justify-center items-center hover:border-b-4">
-                  <p className="text-lg text-white">Initialisation</p>
-                </button>
-              </Link>
-              <Link to="/seatMatrix">
-                <button className="flex h-full p-2 justify-center items-center hover:border-b-4">
-                  <p className="text-lg text-white">SeatMatrix</p>
-                </button>
-              </Link>
-              <Link to="/rounds">
-                <button className="flex h-full p-2 justify-center items-center hover:border-b-4">
-                  <p className="text-lg text-white">Rounds</p>
-                </button>
-              </Link>
-              <Link to="/search">
-                <button className="flex h-full p-2 justify-center items-center hover:border-b-4">
-                  <p className="text-lg text-white">Search</p>
-                </button>
-              </Link>
-            </>
-          )}
-          <Tooltip title="Logout">
-            <IconButton color="inherit" onClick={handleSignOut}>
-              <p className="text-white text-base  font-bold">Log Out </p>
-              <ExitToAppIcon style={{ color: "white" }} />
+        <div style={{ flexGrow: 1 }} />
+
+        {isMobile ? (
+          <>
+            <IconButton color="inherit" edge="end" onClick={toggleDrawer(true)}>
+              <MenuIcon />
             </IconButton>
-          </Tooltip>
-        </div>
-      )}
-
-      {!auth.token && (
-        <div className="w-[fit-content] h-full flex justify-center items-center gap-4 ml-auto">
-          <Link to="/">
-            <button className="flex h-full p-2 justify-center items-center bg-white  border border-[#1B3058]-500  hover:bg-blue-500 hover:text-white transition duration-300">
-              <p className="text-lg text-[#1B3058]-500 font-semibold">Login</p>
-            </button>
-          </Link>
-        </div>
-      )}
-    </nav>
+            <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+              {drawerItems}
+            </Drawer>
+          </>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {auth.token ? (
+              <>
+                {!auth.isAdmin && (
+                  <>
+                    <NavLink to="/home" style={({ isActive }) => ({
+                      color: isActive ? "#4CCD99" : "white",
+                      textDecoration: 'none',
+                      margin: '0 10px'
+                    })}>
+                      <span>Home</span>
+                    </NavLink>
+                    <NavLink to="/initialise" style={({ isActive }) => ({
+                      color: isActive ? "#4CCD99" : "white",
+                      textDecoration: 'none',
+                      margin: '0 10px'
+                    })}>
+                      <span>Initialisation</span>
+                    </NavLink>
+                    <NavLink to="/seatMatrix" style={({ isActive }) => ({
+                      color: isActive ? "#4CCD99" : "white",
+                      textDecoration: 'none',
+                      margin: '0 10px'
+                    })}>
+                      <span>Seat Matrix</span>
+                    </NavLink>
+                    <NavLink to="/rounds" style={({ isActive }) => ({
+                      color: isActive ? "#4CCD99" : "white",
+                      textDecoration: 'none',
+                      margin: '0 10px'
+                    })}>
+                      <span>Rounds</span>
+                    </NavLink>
+                    <NavLink to="/search" style={({ isActive }) => ({
+                      color: isActive ? "#4CCD99" : "white",
+                      textDecoration: 'none',
+                      margin: '0 10px'
+                    })}>
+                      <span>Search</span>
+                    </NavLink>
+                  </>
+                )}
+                <Tooltip title="Logout">
+                  <IconButton color="inherit" onClick={handleSignOut}>
+                    <ExitToAppIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <NavLink to="/" style={({ isActive }) => ({
+                color: isActive ? "blue" : "white",
+                textDecoration: 'none',
+              })}>
+                <span>Login</span>
+              </NavLink>
+            )}
+          </div>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 }
 
