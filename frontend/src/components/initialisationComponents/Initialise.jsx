@@ -1,13 +1,22 @@
-import React, { useState } from "react";
-import { Button, Snackbar, Alert, Box } from "@mui/material";
-import FileUploader from "./FileUploader";
-import MatchColumns from "./MatchColumns";
+import React, { useState, useEffect } from "react";
+import { Button, Snackbar, Alert, Card, CardContent, CardHeader, Typography, Grid } from "@mui/material";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
+import fileDownload from "js-file-download";
+import { useNavigate } from "react-router-dom";
+import documentImage from "../../images/docmentimage.jpg";
+import MatchColumns from "./MatchColumns";
 
 function Initialise(props) {
+  const [file, setFile] = useState(null);
+  const [fileExists, setFileExists] = useState(false);
+  const [loading, setIsLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("error");
+  const navigate = useNavigate();
 
   function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -15,12 +24,96 @@ function Initialise(props) {
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
-  // Function to call server to reset database
+  useEffect(() => {
+    const checkFileStatus = async () => {
+      setIsLoading(true);
+      try {
+        const jwtToken = getCookie("jwtToken");
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/initialise/getMasterFileUploadStatus`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        setFileExists(response.data.result);
+      } catch (err) {
+        console.error(err);
+        if (err.response && err.response.status === 401) {
+          navigate("/");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkFileStatus();
+  }, [navigate]);
+
+  const handleFileSubmit = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile.name.split(".").pop() !== "xlsx") {
+      setAlertMessage("Invalid file type, please upload an xlsx file");
+      setAlertSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+    setFile(selectedFile);
+  };
+
+  const uploadFile = async () => {
+    const formData = new FormData();
+    formData.append("name", file.name);
+    formData.append("file", file);
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/initialise/getFile`,
+        formData,
+        { withCredentials: true }
+      );
+      setAlertMessage("File upload successful");
+      setAlertSeverity("success");
+      setSnackbarOpen(true);
+      window.location.reload();
+    } catch (error) {
+      console.error("Upload error:", error);
+      if (error.response && error.response.status === 401) {
+        setAlertMessage("File upload failed. Please log in with correct credentials.");
+      } else {
+        setAlertMessage("File upload failed.");
+      }
+      setAlertSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const token = getCookie("jwtToken");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/initialise/uploadedFile`,
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      fileDownload(response.data, "uploadedFile.xlsx");
+    } catch (error) {
+      console.error("Download error:", error);
+    }
+  };
+
   const handleReset = async () => {
     try {
-      const jwtToken = getCookie("jwtToken"); // Get JWT token from cookie
-
-      // Proceed with resetting database
+      const jwtToken = getCookie("jwtToken");
       await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/initialise/reset`,
         {
@@ -32,7 +125,6 @@ function Initialise(props) {
           withCredentials: true,
         }
       );
-
       window.location.reload();
     } catch (error) {
       console.log("Error:", error);
@@ -47,66 +139,132 @@ function Initialise(props) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '80px' }}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        gap={4}
-        padding={4}
-        sx={{}}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '80px', padding: '10px' }}>
+      <Card sx={{ maxWidth: 800, margin: "auto", boxShadow: 3, minWidth: '210px' }}>
+        {!fileExists && (<CardHeader
+          title="Upload The Master Excel File"
+          titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
+          sx={{ backgroundColor: "#f5f5f5" }}
+        />)}
+        {fileExists && (<CardHeader
+          title="Select Required Fields"
+          titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
+          sx={{ backgroundColor: "#f5f5f5" }}
+        />)}
+        <CardContent>
+          <Grid container spacing={2} alignItems="center" justifyContent="center">
+            {!fileExists && (
+              <>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    startIcon={<UploadFileIcon />}
+                  >
+                    Choose File
+                    <input type="file" accept=".xlsx" hidden onChange={handleFileSubmit} />
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  {file === null ? (
+                    <Typography variant="body1" color="textSecondary" align="center" sx={{ fontFamily: 'Poppins, sans serif' }}>
+                      No Files Uploaded
+                    </Typography>
+                  ) : (
+                    <Grid container spacing={2} justifyContent="center">
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">
+                          <b>File Name:</b> {file.name}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">
+                          <b>Type:</b> {file.type}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+
+                  )}
+                </Grid>
+                {file !== null && (
+                  <Grid item xs={12}>
+                    <Button
+                      variant="contained"
+                      startIcon={<FileUploadIcon />}
+                      fullWidth
+                      onClick={uploadFile}
+                    >
+                      Upload
+                    </Button>
+                  </Grid>
+                )}
+              </>
+            )}
+            {fileExists && (
+              // <Grid container spacing={2} justifyContent="center" alignItems="center">
+                
+              //   <Grid item xs={12}>
+              //     <div style={{ textAlign: 'center' }}>
+              //       <Typography
+              //         variant="body1"
+              //         sx={{ color: '#8BC34A', fontWeight: 'bold' }} 
+              //       >
+              //         File Uploaded
+              //       </Typography>
+              //     </div>
+              //   </Grid>
+              //   <Grid item xs={12}>
+              //     <Button
+              //       variant="contained"
+              //       startIcon={<DownloadIcon />}
+              //       fullWidth
+              //       onClick={handleDownload}
+              //     >
+              //       Download
+              //     </Button>
+              //   </Grid>
+              // </Grid>
+              <MatchColumns />
+            )}
+          </Grid>
+          {fileExists && (<div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Button
+              variant="contained"
+              onClick={handleReset}
+              sx={{
+                color: "white",
+                background: "linear-gradient(45deg, #FF3D00, #D50000)",
+                borderRadius: "8px",
+                padding: "8px 16px",
+                fontWeight: "bold",
+                boxShadow: "0 3px 5px 2px rgba(255, 61, 0, 0.3)",
+                '&:hover': {
+                  background: "linear-gradient(45deg, #D50000, #B71C1C)",
+                  boxShadow: "0 3px 5px 2px rgba(213, 0, 0, 0.3)",
+                },
+                '&:active': {
+                  boxShadow: "none",
+                }
+              }}
+            >
+              Reset
+            </Button>
+          </div>)}
+        </CardContent>
+      </Card>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
       >
-        <FileUploader />
-        {/* <Box sx={{ height: 50, border: '2px solid' }} /> */}
-        <MatchColumns />
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          gap={2}
-          width="100%"
-          sx={{}}
-        >
-          {/* <Typography variant="h4" color="textSecondary">
-            Initialise The DataBase
-          </Typography> */}
-          <Button
-            variant="contained"
-            onClick={handleReset}
-            sx={{
-              color: "white",
-              background: "linear-gradient(45deg, #FF3D00, #D50000)",
-              borderRadius: "8px",
-              padding: "8px 16px",
-              fontWeight: "bold",
-              boxShadow: "0 3px 5px 2px rgba(255, 61, 0, 0.3)",
-              '&:hover': {
-                background: "linear-gradient(45deg, #D50000, #B71C1C)",
-                boxShadow: "0 3px 5px 2px rgba(213, 0, 0, 0.3)",
-              },
-              '&:active': {
-                boxShadow: "none",
-              }
-            }}
-          >
-            Reset
-          </Button>
-        </Box>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
+        <Alert
           onClose={handleSnackbarClose}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
         >
-          <Alert
-            onClose={handleSnackbarClose}
-            severity={alertSeverity}
-            sx={{ width: "100%" }}
-          >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
-      </Box>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
