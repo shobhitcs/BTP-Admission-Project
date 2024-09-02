@@ -7,44 +7,43 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import noresults from "../../images/noresults.jpg"
-function FilteredCandidatesTable(props) {
-    return (
-        <div className='mt-[50px] w-full flex justify-center'>
-            {props.data.length!==0 && 
-            <TableContainer component={Paper} sx={{ width: "90%" }}>
-                <Table sx={{ width: "100%" }} aria-label="simple table">
-                <TableHead className='bg-[#1B3058] '>
-                    <TableRow>
-                        <TableCell align="center" style={{color:'white'}}>COAP ID</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>Application Number</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>Category</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>Gender</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>Max Gate Score</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>PWD</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>EWS</TableCell>
-                        <TableCell align="center" style={{color:'white'}}>Options</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {props.data.map(({category,gender,coap,ews,pwd,maxgatescore,appno})=>{
-                        return (
-                            <FilteredCandidatesTableRow category={category} gender={gender} coap={coap} ews={ews} pwd={pwd} appno={appno} maxgatescore={maxgatescore}/>
-                        )
-                    })}
-                </TableBody>
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import noresults from "../../images/noresults.jpg";
 
-                </Table>
-            </TableContainer>
-            }
-            {props.data.length===0 &&
-                <div className='w-full flex flex-col justify-center items-center'>
-                    <img src={noresults} alt='error' className='w-[100px] height-[100px]'></img>
-                    <p className='text-2xl text-gray-800'>No Results Found</p>
-                </div>
-            }
-        </div>
-    );
+function FilteredCandidatesTable({ data }) {
+  return (
+    <Box sx={{ mt: 5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {data.length !== 0 ? (
+        <TableContainer component={Paper} sx={{ width: '90%', maxWidth: '1200px' }}>
+          <Table aria-label="candidates table">
+            <TableHead sx={{ backgroundColor: '#1B3058' }}>
+              <TableRow>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>COAP ID</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Application Number</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Category</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Gender</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Max Gate Score</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>PWD</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>EWS</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Options</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((row) => (
+                <FilteredCandidatesTableRow key={row.coap} {...row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <img src={noresults} alt="No Results" style={{ width: '100px', height: '100px' }} />
+          <Typography variant="h6" sx={{ mt: 2, color: 'text.secondary', fontFamily: 'Ubuntu,  sans serif' }}>No Results Found</Typography>
+        </Box>
+      )}
+    </Box>
+  );
 }
 
 export default FilteredCandidatesTable;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Snackbar, Alert, Typography, Box, Container } from "@mui/material";
+import { Button, Snackbar, Alert, Box } from "@mui/material";
 import FileUploader from "./FileUploader";
 import MatchColumns from "./MatchColumns";
 import axios from "axios";
@@ -47,7 +47,7 @@ function Initialise(props) {
   };
 
   return (
-    <Container>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '80px' }}>
       <Box
         display="flex"
         flexDirection="column"
@@ -55,28 +55,44 @@ function Initialise(props) {
         justifyContent="center"
         gap={4}
         padding={4}
+        sx={{}}
       >
+        <FileUploader />
+        {/* <Box sx={{ height: 50, border: '2px solid' }} /> */}
+        <MatchColumns />
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
           gap={2}
           width="100%"
+          sx={{}}
         >
-          <Typography variant="h4" color="textSecondary">
+          {/* <Typography variant="h4" color="textSecondary">
             Initialise The DataBase
-          </Typography>
+          </Typography> */}
           <Button
-            variant="outlined"
+            variant="contained"
             onClick={handleReset}
-            sx={{ color: "white", backgroundColor: "red", '&:hover': { backgroundColor: "darkred" } }}
+            sx={{
+              color: "white",
+              background: "linear-gradient(45deg, #FF3D00, #D50000)",
+              borderRadius: "8px",
+              padding: "8px 16px",
+              fontWeight: "bold",
+              boxShadow: "0 3px 5px 2px rgba(255, 61, 0, 0.3)",
+              '&:hover': {
+                background: "linear-gradient(45deg, #D50000, #B71C1C)",
+                boxShadow: "0 3px 5px 2px rgba(213, 0, 0, 0.3)",
+              },
+              '&:active': {
+                boxShadow: "none",
+              }
+            }}
           >
             Reset
           </Button>
         </Box>
-        <FileUploader />
-        <Box sx={{ height: 50, border: '2px solid' }} />
-        <MatchColumns />
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
@@ -91,7 +107,7 @@ function Initialise(props) {
           </Alert>
         </Snackbar>
       </Box>
-    </Container>
+    </div>
   );
 }
 

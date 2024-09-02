@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { Snackbar, Alert } from "@mui/material";
-import { applicantsSchemaColumnNames } from "./columnNames";
+import { Snackbar, Alert, Box, Typography } from "@mui/material";
+import { applicantsSchemaColumnNames } from "./columnNames"; // Ensure this path is correct
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SelectBox from "./SelectBox";
 import axios from "axios";
@@ -10,13 +10,14 @@ import DownloadIcon from "@mui/icons-material/Download";
 import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
 
-const MatchColumns = () => {
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  }
+// Define getCookie function
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
 
+const MatchColumns = () => {
   const [columnNamesMatched, setColumnNamesMatched] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileExists, setFileExists] = useState(false);
@@ -39,7 +40,6 @@ const MatchColumns = () => {
         }
       )
       .then((res) => {
-        console.log(res.data.result);
         setFileExists(res.data.result);
         setIsLoading(false);
       })
@@ -73,7 +73,6 @@ const MatchColumns = () => {
           withCredentials: true,
         }
       );
-      console.log(response.data.result);
       setColumnNamesMatched(response.data.result);
       setIsLoading(false);
     } catch (error) {
@@ -167,82 +166,95 @@ const MatchColumns = () => {
   };
 
   return (
-    <div className="flex flex-col max-w-[800px] min-w-[80%] shadow-lg rounded-xl ">
-      <div className="flex justify-center items-center w-full h-11 bg-zinc-100 rounded-t-xl gap-10">
-        <p className="text-xl text-black">Match The Columns</p>
-      </div>
+    <Box className="flex flex-col max-w-[800px] min-w-[80%] shadow-lg rounded-xl">
+      <Box
+        className="flex justify-center items-center w-full h-11 bg-zinc-100 rounded-t-xl gap-10"
+        sx={{ p: 2 }}
+      >
+        <Typography variant="h6">Match The Columns</Typography>
+      </Box>
+
       {!fileExists && columnNamesMatched !== null && !isLoading && (
-        <div className="flex justify-center rounded-b-xl items-center gap-2 p-2 box-border h-[500px] flex-wrap overflow-y-scroll">
-          {!fileExists &&
-            columnNamesMatched != null &&
-            Object.keys(columnNamesMatched).map((columnName) => {
-              return (
-                <div className="w-[250px] flex flex-col justify-center rounded-md p-2 shadow-md">
-                  <p className="text-md text-gray-400">{columnName}</p>
-                  <SelectBox
-                    uploadedColumnName={columnName}
-                    predictedColumnName={columnNamesMatched[columnName]}
-                    changeState={changeColumnNamesMatchedState}
-                  />
-                </div>
-              );
-            })}
-        </div>
+        <Box
+          className="flex justify-center rounded-b-xl items-center gap-2 p-2 box-border h-[500px] flex-wrap overflow-y-scroll"
+          sx={{ p: 2 }}
+        >
+          {Object.keys(columnNamesMatched).map((columnName) => (
+            <Box
+              key={columnName}
+              className="w-[250px] flex flex-col justify-center rounded-md p-2 shadow-md"
+            >
+              <Typography variant="body2" color="textSecondary">
+                {columnName}
+              </Typography>
+              <SelectBox
+                uploadedColumnName={columnName}
+                predictedColumnName={columnNamesMatched[columnName]}
+                changeState={changeColumnNamesMatchedState}
+              />
+            </Box>
+          ))}
+        </Box>
       )}
+
       {fileExists && !isLoading && (
-        <div className="flex items-center flex-col h-[180px] gap-1">
+        <Box className="flex items-center flex-col h-[180px] gap-1">
           <img
             src={documentImage}
             alt="Not Found"
             style={{ width: "200px", height: "120px" }}
           />
-          <p className="text-xl text-grey ">
-            Hmm looks like you have already Matched the Columns
-          </p>
-        </div>
-      )}
-      {!fileExists && columnNamesMatched === null && !isLoading && (
-        <div className="flex justify-center rounded-b-xl items-center gap-2 p-2 box-border h-[100px] flex-wrap">
-          <p className="text-xl">Press The button to get Data</p>
-        </div>
-      )}
-      {!fileExists && isLoading && (
-        <div className="flex w-full justify-center items-center">
-          <Loader />
-        </div>
+          <Typography variant="body1" color="textSecondary">
+            Hmm, looks like you have already Matched the Columns
+          </Typography>
+        </Box>
       )}
 
-      <div className="w-full p-2 flex justify-center">
-        {!fileExists && columnNamesMatched != null && (
+      {!fileExists && columnNamesMatched === null && !isLoading && (
+        <Box className="flex justify-center rounded-b-xl items-center gap-2 p-2 box-border h-[100px] flex-wrap">
+          <Typography variant="body1">Press The button to get Data</Typography>
+        </Box>
+      )}
+
+      {!fileExists && isLoading && (
+        <Box className="flex w-full justify-center items-center">
+          <Loader />
+        </Box>
+      )}
+
+      <Box className="w-full p-2 flex justify-center">
+        {!fileExists && columnNamesMatched !== null && (
           <Button
             variant="contained"
             startIcon={<FileUploadIcon />}
-            style={{ margin: "auto", marginBottom: "5px" }}
+            sx={{ margin: "auto", marginBottom: "5px" }}
             onClick={sendSelectedColumnNames}
           >
             Save To DataBase
           </Button>
         )}
-        {!fileExists && columnNamesMatched == null && (
+
+        {!fileExists && columnNamesMatched === null && (
           <Button
             variant="contained"
+            sx={{ margin: "auto", marginBottom: "5px" }}
             onClick={getMatchedColumnNames}
-            style={{ margin: "auto", marginBottom: "5px" }}
           >
             Get Column Names
           </Button>
         )}
+
         {fileExists && (
           <Button
             variant="contained"
             startIcon={<DownloadIcon />}
-            style={{ margin: "auto", marginBottom: "5px" }}
+            sx={{ margin: "auto", marginBottom: "5px" }}
             onClick={handleDownload}
           >
             Download The Edited File
           </Button>
         )}
-      </div>
+      </Box>
 
       <Snackbar
         open={snackbarOpen}
@@ -257,7 +269,7 @@ const MatchColumns = () => {
           {alertMessage}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 };
 

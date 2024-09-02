@@ -157,7 +157,7 @@ function LoginForm() {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            sx={{ fontFamily: 'Poppins, sans-serif', marginBottom: 1, }}
+            sx={{ fontFamily: 'Poppins, sans-serif', marginBottom: 1 }}
           />
           <TextField
             variant="outlined"
