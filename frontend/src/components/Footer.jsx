@@ -5,13 +5,13 @@ function Footer() {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         height: 60,
         backgroundColor: "#303030",
-        marginTop: "auto",
+        // marginTop: "auto",
         padding: "20px"
       }}
     >

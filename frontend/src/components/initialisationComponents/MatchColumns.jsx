@@ -158,12 +158,13 @@ const MatchColumns = () => {
                     boxShadow: 1,
                     padding: 1,
                     margin: '0 auto',  // Center align tiles
+                    maxWidth: '300px',
                   }}
                 >
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
+                    sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif', marginRight: '10px' }}
                   >
                     {columnName}
                   </Typography>
@@ -171,7 +172,7 @@ const MatchColumns = () => {
                     uploadedColumnName={columnName}
                     predictedColumnName={columnNamesMatched[columnName]}
                     changeState={changeColumnNamesMatchedState}
-                    sx={{ flexShrink: 2, fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
+                    sx={{  fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
                   />
                 </Box>
               </Grid>
