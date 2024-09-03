@@ -1,10 +1,8 @@
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import RoundDetails from "./RoundDetails";
-import { serverLink } from "../../serverLink";
-import Loader from "../Loader";
 import { useNavigate } from "react-router-dom";
 
 function Rounds(props) {
@@ -89,7 +87,7 @@ function Rounds(props) {
 
   return (
     <div className="w-full min-h-[800px] h-auto flex justify-center items-center">
-      {isLoading && <Loader />}
+      {isLoading && <CircularProgress />}
       {!isLoading && (
         <div className="w-full flex flex-col items-stretch justify-center mt-8 h-auto">
           {/* <div className="w-full flex justify-center">

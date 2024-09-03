@@ -5,7 +5,7 @@ function Footer() {
   return (
     <Box
       sx={{
-        width: "100%",
+        width: "100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

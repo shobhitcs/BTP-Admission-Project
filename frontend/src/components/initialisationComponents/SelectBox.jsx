@@ -1,13 +1,13 @@
-import React,{ useState }  from 'react';
+import React, { useState } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { applicantsSchemaColumnNames } from './columnNames';
 
 function SelectBox(props) {
-    const [selectedValue,setSelectedValue]=useState(props.predictedColumnName);
-    const handleChangeSelectedValue=(e)=>{
+    const [selectedValue, setSelectedValue] = useState(props.predictedColumnName);
+    const handleChangeSelectedValue = (e) => {
         setSelectedValue(e.target.value);
-        props.changeState(props.uploadedColumnName,e.target.value);
+        props.changeState(props.uploadedColumnName, e.target.value);
     }
     return (
         <Select
@@ -16,9 +16,12 @@ function SelectBox(props) {
             value={selectedValue}
             onChange={handleChangeSelectedValue}
             autoWidth
+            sx={{ fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
         >
-            {applicantsSchemaColumnNames.map((columnName)=>{
-                return(<MenuItem value={columnName}>{columnName}</MenuItem>)
+            {applicantsSchemaColumnNames.map((columnName) => {
+                return (<MenuItem value={columnName} >
+                    {columnName}
+                </MenuItem>)
             })}
             <MenuItem value="ignore">ignore</MenuItem>
         </Select>

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Snackbar, Alert, Box, Typography, Grid } from "@mui/material";
+import { Button, Snackbar, Alert, Box, Typography, Grid, CircularProgress } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
-import Loader from "../Loader";
 import SelectBox from "./SelectBox";
 import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
 import { applicantsSchemaColumnNames } from "./columnNames";
 
-// Define getCookie function
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -25,24 +23,42 @@ const MatchColumns = () => {
   const [alertSeverity, setAlertSeverity] = useState("error");
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/initialise/getMasterFileModifiedStatus`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        setFileExists(res.data.result);
+    // Fetch initial file status and column details when component mounts
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // Check if the file exists
+        const statusRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/initialise/getMasterFileModifiedStatus`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true,
+          },
+          withCredentials: true,
+        });
+        setFileExists(statusRes.data.result);
+
+        if (!statusRes.data.result) {
+          // Fetch matched column names if file doesn't exist
+          const jwtToken = getCookie("jwtToken");
+          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/initialise/getMatchedColumnNames`, {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          });
+          setColumnNamesMatched(response.data.result);
+        }
         setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
+      } catch (error) {
+        handleErrorResponse(error, "Failed to fetch initial data");
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const changeColumnNamesMatchedState = (uploadedColumnName, selectedColumnName) => {
@@ -50,26 +66,6 @@ const MatchColumns = () => {
       ...prevState,
       [uploadedColumnName]: selectedColumnName
     }));
-  };
-
-  const getMatchedColumnNames = async () => {
-    setIsLoading(true);
-    try {
-      const jwtToken = getCookie("jwtToken");
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/initialise/getMatchedColumnNames`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      setColumnNamesMatched(response.data.result);
-      setIsLoading(false);
-    } catch (error) {
-      handleErrorResponse(error, "You haven't uploaded the file");
-      setIsLoading(false);
-    }
   };
 
   const sendSelectedColumnNames = () => {
@@ -147,24 +143,35 @@ const MatchColumns = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, margin: 'auto', padding: 3, boxShadow: 3, borderRadius: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'grey.100', padding: 2, borderRadius: 1 }}>
-        <Typography variant="h6">Match The Columns</Typography>
-      </Box>
-
+    <div>
       {!fileExists && columnNamesMatched !== null && !isLoading && (
-        <Box sx={{ padding: 2, height: 500, overflowY: 'auto' }}>
+        <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto'}}>
           <Grid container spacing={2}>
             {Object.keys(columnNamesMatched).map((columnName) => (
               <Grid item xs={12} sm={6} md={4} key={columnName}>
-                <Box sx={{ padding: 2, border: '1px solid grey', borderRadius: 1, boxShadow: 2 }}>
-                  <Typography variant="body2" color="textSecondary">
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    border: '1px solid grey',
+                    borderRadius: 1,
+                    boxShadow: 1,
+                    padding: 1,
+                    margin: '0 auto',  // Center align tiles
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
+                  >
                     {columnName}
                   </Typography>
                   <SelectBox
                     uploadedColumnName={columnName}
                     predictedColumnName={columnNamesMatched[columnName]}
                     changeState={changeColumnNamesMatchedState}
+                    sx={{ flexShrink: 2, fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
                   />
                 </Box>
               </Grid>
@@ -172,6 +179,7 @@ const MatchColumns = () => {
           </Grid>
         </Box>
       )}
+
 
       {fileExists && !isLoading && (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 2 }}>
@@ -182,15 +190,9 @@ const MatchColumns = () => {
         </Box>
       )}
 
-      {!fileExists && columnNamesMatched === null && !isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Typography variant="body1">Press The button to get Data</Typography>
-        </Box>
-      )}
-
       {!fileExists && isLoading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Loader />
+          <CircularProgress />
         </Box>
       )}
 
@@ -199,18 +201,22 @@ const MatchColumns = () => {
           <Button
             variant="contained"
             startIcon={<FileUploadIcon />}
+            color="success"
             onClick={sendSelectedColumnNames}
+            sx={{
+              maxWidth: '200px',
+              backgroundColor: "#36AA95", // Success green color
+              color: "white",
+              fontWeight: "bold",
+              '&:hover': {
+                backgroundColor: "#379777", // Slightly darker green for hover
+              },
+              '&:active': {
+                backgroundColor: "#388E3C", // Even darker green for active state
+              }
+            }}
           >
             Save To DataBase
-          </Button>
-        )}
-
-        {!fileExists && columnNamesMatched === null && (
-          <Button
-            variant="contained"
-            onClick={getMatchedColumnNames}
-          >
-            Get Column Names
           </Button>
         )}
 
@@ -238,7 +244,7 @@ const MatchColumns = () => {
           {alertMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </div>
   );
 };
 

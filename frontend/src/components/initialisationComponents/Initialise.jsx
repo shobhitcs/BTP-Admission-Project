@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Button, Snackbar, Alert, Card, CardContent, CardHeader, Typography, Grid } from "@mui/material";
+import { Button, Snackbar, Alert, Card, CardContent, CardHeader, Typography, Grid, Box } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 import fileDownload from "js-file-download";
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { useNavigate } from "react-router-dom";
 import documentImage from "../../images/docmentimage.jpg";
 import MatchColumns from "./MatchColumns";
@@ -139,8 +140,8 @@ function Initialise(props) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '80px', padding: '10px' }}>
-      <Card sx={{ maxWidth: 800, margin: "auto", boxShadow: 3, minWidth: '210px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '100px 10px 10px 10px', marginBottom: '40px' }}>
+      <Card sx={{ margin: "auto", boxShadow: 3, minWidth: '150px' }}>
         {!fileExists && (<CardHeader
           title="Upload The Master Excel File"
           titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
@@ -151,7 +152,38 @@ function Initialise(props) {
           titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
           sx={{ backgroundColor: "#f5f5f5" }}
         />)}
-        <CardContent>
+        <CardContent >
+          {fileExists && (
+            <Box display="flex" justifyContent="center" marginTop="20px">
+              <Button
+                variant="contained"
+                startIcon={<RestartAltIcon />} // Add the Refresh icon here
+                onClick={handleReset}
+                sx={{
+                  // maxWidth: '200px',
+                  color: "white",
+                  backgroundColor: "#FF3D00", // Red color
+                  borderRadius: "6px",
+                  padding: "6px 12px",
+                  fontWeight: "bold",
+                  marginBottom: '40px',
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                  textTransform: "none", // Keeps the text as-is, without capitalizing
+                  transition: "background-color 0.3s ease, box-shadow 0.3s ease",
+                  '&:hover': {
+                    backgroundColor: "#D50000", // Slightly darker red for hover
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+                  },
+                  '&:active': {
+                    backgroundColor: "#B71C1C", // Even darker red for active state
+                    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+                  }
+                }}
+              >
+                Reset All
+              </Button>
+            </Box>
+          )}
           <Grid container spacing={2} alignItems="center" justifyContent="center">
             {!fileExists && (
               <>
@@ -167,7 +199,12 @@ function Initialise(props) {
                 </Grid>
                 <Grid item xs={12}>
                   {file === null ? (
-                    <Typography variant="body1" color="textSecondary" align="center" sx={{ fontFamily: 'Poppins, sans serif' }}>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      align="center"
+                      sx={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
                       No Files Uploaded
                     </Typography>
                   ) : (
@@ -183,74 +220,42 @@ function Initialise(props) {
                         </Typography>
                       </Grid>
                     </Grid>
-
                   )}
                 </Grid>
                 {file !== null && (
                   <Grid item xs={12}>
-                    <Button
-                      variant="contained"
-                      startIcon={<FileUploadIcon />}
-                      fullWidth
-                      onClick={uploadFile}
-                    >
-                      Upload
-                    </Button>
+                    <Box display="flex" justifyContent="center">
+                      <Button
+                        variant="contained"
+                        startIcon={<FileUploadIcon />}
+                        fullWidth
+                        onClick={uploadFile}
+                        sx={{
+                          maxWidth: '200px',
+                          backgroundColor: "#36AA95", // Success green color
+                          color: "white",
+                          fontWeight: "bold",
+                          '&:hover': {
+                            backgroundColor: "#379777", // Slightly darker green for hover
+                          },
+                          '&:active': {
+                            backgroundColor: "#388E3C", // Even darker green for active state
+                          }
+                        }}
+                      >
+                        Upload
+                      </Button>
+                    </Box>
                   </Grid>
                 )}
               </>
             )}
             {fileExists && (
-              // <Grid container spacing={2} justifyContent="center" alignItems="center">
-                
-              //   <Grid item xs={12}>
-              //     <div style={{ textAlign: 'center' }}>
-              //       <Typography
-              //         variant="body1"
-              //         sx={{ color: '#8BC34A', fontWeight: 'bold' }} 
-              //       >
-              //         File Uploaded
-              //       </Typography>
-              //     </div>
-              //   </Grid>
-              //   <Grid item xs={12}>
-              //     <Button
-              //       variant="contained"
-              //       startIcon={<DownloadIcon />}
-              //       fullWidth
-              //       onClick={handleDownload}
-              //     >
-              //       Download
-              //     </Button>
-              //   </Grid>
-              // </Grid>
               <MatchColumns />
             )}
           </Grid>
-          {fileExists && (<div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <Button
-              variant="contained"
-              onClick={handleReset}
-              sx={{
-                color: "white",
-                background: "linear-gradient(45deg, #FF3D00, #D50000)",
-                borderRadius: "8px",
-                padding: "8px 16px",
-                fontWeight: "bold",
-                boxShadow: "0 3px 5px 2px rgba(255, 61, 0, 0.3)",
-                '&:hover': {
-                  background: "linear-gradient(45deg, #D50000, #B71C1C)",
-                  boxShadow: "0 3px 5px 2px rgba(213, 0, 0, 0.3)",
-                },
-                '&:active': {
-                  boxShadow: "none",
-                }
-              }}
-            >
-              Reset
-            </Button>
-          </div>)}
         </CardContent>
+
       </Card>
       <Snackbar
         open={snackbarOpen}

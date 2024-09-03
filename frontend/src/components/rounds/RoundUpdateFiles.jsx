@@ -5,9 +5,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import GetAppIcon from "@mui/icons-material/GetApp";
-import { TextField, Button, Snackbar, Alert } from "@mui/material";
+import { TextField, Button, Snackbar, Alert, CircularProgress } from "@mui/material";
 import fileDownload from "js-file-download";
-import Loader from "../Loader";
 
 function RoundUpdateFiles(props) {
   function getCookie(name) {
@@ -194,7 +193,7 @@ function RoundUpdateFiles(props) {
           </div>
         )}
       </div>
-      {isLoading && <Loader />}
+      {isLoading && <CircularProgress />}
       {columnNames != null && !isLoading && (
         <div className="flex justify-center flex-col items-center w-full">
           <div className="w-full flex justify-center items-center">

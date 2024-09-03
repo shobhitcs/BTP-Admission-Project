@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RoundUpdateFiles from "./RoundUpdateFiles";
-import { Button, Snackbar, Alert } from "@mui/material";
+import { Button, Snackbar, Alert, CircularProgress } from "@mui/material";
 import Download from "@mui/icons-material/Download";
-import Loader from "../Loader";
 import fileDownload from "js-file-download";
 
 function RoundDetails(props) {
@@ -113,7 +112,7 @@ function RoundDetails(props) {
 
   return (
     <div className="w-full h-auto flex justify-center items-center">
-      {isLoading && <Loader />}
+      {isLoading && <CircularProgress />}
       {!isLoading && (
         <div className="w-full flex flex-col justify-center items-center h-auto p-3">
           <div className="flex w-[95%] border-2 h-[60px] mt-5 items-center justify-between p-3 bg-zinc-50 shadow-md rounded-md">

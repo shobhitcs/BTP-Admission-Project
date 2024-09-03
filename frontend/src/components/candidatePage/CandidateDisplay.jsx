@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import Loader from "../Loader";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { Button, Snackbar, Alert } from "@mui/material";
+import { Button, Snackbar, Alert, CircularProgress } from "@mui/material";
 
 function CandidateDisplay(props) {
   function getCookie(name) {
@@ -167,7 +166,7 @@ function CandidateDisplay(props) {
             )}
         </div>
       )}
-      {isLoading && <Loader />}
+      {isLoading &&  <CircularProgress /> }
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           {errorMessage}

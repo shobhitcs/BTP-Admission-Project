@@ -7,10 +7,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import SeatMatrixRow from "./SeatMatrixRow";
-import Loader from "../Loader";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert, CircularProgress } from "@mui/material";
 
 function SeatMatrix(props) {
   const navigate = useNavigate();
@@ -129,7 +128,7 @@ function SeatMatrix(props) {
       )}
       {isLoading && (
         <div className="h-[80vh]">
-          <Loader />
+          <CircularProgress />
         </div>
       )}
       <Snackbar
