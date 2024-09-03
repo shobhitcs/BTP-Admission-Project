@@ -65,7 +65,7 @@ function SeatMatrixRow(props) {
         <TableCell
           component="th"
           scope="row"
-          style={{ fontSize: "15px", fontWeight: "bold", color: "#FFCB00" }}
+          style={{ fontSize: "15px", fontWeight: "bold", color: "#343131" }}
         >
           {props.category}
         </TableCell>
@@ -82,7 +82,7 @@ function SeatMatrixRow(props) {
           <Button
             variant="contained"
             onClick={handleSave}
-            style={{ background: "#1B3058" }}
+            style={{ background: "#343131" }}
             startIcon={<SaveIcon />}
           >
             Save

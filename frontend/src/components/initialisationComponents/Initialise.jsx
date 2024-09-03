@@ -180,7 +180,7 @@ function Initialise(props) {
                   }
                 }}
               >
-                Reset All
+                Reset Data
               </Button>
             </Box>
           )}

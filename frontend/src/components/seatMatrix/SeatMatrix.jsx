@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Box,
+} from "@mui/material";
 import SeatMatrixRow from "./SeatMatrixRow";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Snackbar, Alert, CircularProgress } from "@mui/material";
 
 function SeatMatrix(props) {
   const navigate = useNavigate();
+
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
+
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
 
@@ -67,69 +75,60 @@ function SeatMatrix(props) {
   }, [navigate]);
 
   return (
-    <div className="flex justify-center w-full flex-col items-center gap-10 mt-8 mb-8">
-      <div className="w-full flex justify-center">
-        <p className="text-3xl text-gray-400">Seat Matrix</p>
-      </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 3,
+        mt: 4,
+        mb: 4,
+        paddingTop: '80px'
+      }}
+    >
+      {/* <Typography variant="h4" color="textSecondary">
+        Seat Matrix
+      </Typography> */}
       {!isLoading && (
-        <TableContainer component={Paper} style={{ width: "80%" }}>
-          <Table
-            sx={{ minWidth: 650 }}
-            size="small"
-            aria-label="a dense table"
-            className="w-1/2"
-          >
+        <TableContainer component={Paper} sx={{ width: "80%" }}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
             <TableHead>
-              <TableRow style={{ background: "#1B3058", height: "70px" }}>
-                <TableCell style={{ fontSize: "18px", color: "white" }}>
+              <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
+                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
                   Category
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ fontSize: "18px", color: "white" }}
-                >
-                  Seats Alloted
+                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
+                  Seats Allotted
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ fontSize: "18px", color: "white" }}
-                >
+                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
                   Seats Booked
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ fontSize: "18px", color: "white" }}
-                >
+                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
                   Set Seats
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ fontSize: "18px", color: "white" }}
-                >
+                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
                   Options
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data != null &&
-                data.map(({ category, seatsAllocated, seatsBooked }, index) => {
-                  return (
-                    <SeatMatrixRow
-                      key={index}
-                      category={category}
-                      seatsAllocated={seatsAllocated}
-                      seatsBooked={seatsBooked}
-                    />
-                  );
-                })}
+              {data &&
+                data.map(({ category, seatsAllocated, seatsBooked }, index) => (
+                  <SeatMatrixRow
+                    key={index}
+                    category={category}
+                    seatsAllocated={seatsAllocated}
+                    seatsBooked={seatsBooked}
+                  />
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
       {isLoading && (
-        <div className="h-[80vh]">
+        <Box sx={{ height: "80vh", display: "flex", alignItems: "center" }}>
           <CircularProgress />
-        </div>
+        </Box>
       )}
       <Snackbar
         open={snackbarOpen}
@@ -144,7 +143,7 @@ function SeatMatrix(props) {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 }
 
