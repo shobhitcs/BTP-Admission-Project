@@ -7,6 +7,7 @@ import SelectBox from "./SelectBox";
 import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
 import { applicantsSchemaColumnNames } from "./columnNames";
+import TaskIcon from '@mui/icons-material/Task';
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -145,13 +146,14 @@ const MatchColumns = () => {
   return (
     <div>
       {!fileExists && columnNamesMatched !== null && !isLoading && (
-        <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto'}}>
+        <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
           <Grid container spacing={2}>
             {Object.keys(columnNamesMatched).map((columnName) => (
               <Grid item xs={12} sm={6} md={4} key={columnName}>
                 <Box
                   sx={{
                     display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
                     border: '1px solid grey',
                     borderRadius: 1,
@@ -164,7 +166,7 @@ const MatchColumns = () => {
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif', marginRight: '10px' }}
+                    sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif', marginBottom: '10px' }}
                   >
                     {columnName}
                   </Typography>
@@ -172,7 +174,7 @@ const MatchColumns = () => {
                     uploadedColumnName={columnName}
                     predictedColumnName={columnNamesMatched[columnName]}
                     changeState={changeColumnNamesMatchedState}
-                    sx={{  fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
+                    sx={{ fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
                   />
                 </Box>
               </Grid>
@@ -184,9 +186,10 @@ const MatchColumns = () => {
 
       {fileExists && !isLoading && (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 2 }}>
-          <img src={documentImage} alt="Document Not Found" style={{ width: 200, height: 120 }} />
-          <Typography variant="body1" color="textSecondary">
-            Hmm, looks like you have already Matched the Columns
+          <TaskIcon sx={{ fontSize: 55, color: 'grey' }} />
+
+          <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
+            Fields Successfully Saved
           </Typography>
         </Box>
       )}
@@ -203,6 +206,7 @@ const MatchColumns = () => {
             variant="contained"
             startIcon={<FileUploadIcon />}
             color="success"
+            disabled={isLoading}
             onClick={sendSelectedColumnNames}
             sx={{
               maxWidth: '200px',
@@ -226,6 +230,13 @@ const MatchColumns = () => {
             variant="contained"
             startIcon={<DownloadIcon />}
             onClick={handleDownload}
+            sx={{
+              backgroundColor: '#8A2BE2', // Violet background color
+              color: '#FFFFFF', // White text color
+              '&:hover': {
+                backgroundColor: '#7A1FCE', // Darker violet on hover
+              },
+            }}
           >
             Download The Edited File
           </Button>

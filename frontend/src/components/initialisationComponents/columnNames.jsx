@@ -83,6 +83,3 @@ export const applicantsSchemaColumnNamesJson = {
   DegreePer7thSem: [],
   DegreePer8thSem: []
 };
-
-
-// lernonewoinfiowe

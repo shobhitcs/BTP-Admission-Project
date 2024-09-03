@@ -141,14 +141,14 @@ function Initialise(props) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '100px 10px 10px 10px', marginBottom: '40px' }}>
-      <Card sx={{ margin: "auto", boxShadow: 3, minWidth: '150px' }}>
+      <Card sx={{ margin: "auto", boxShadow: 3, minWidth: '210px' }}>
         {!fileExists && (<CardHeader
           title="Upload The Master Excel File"
           titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
           sx={{ backgroundColor: "#f5f5f5" }}
         />)}
         {fileExists && (<CardHeader
-          title="Select Required Fields"
+          title="Final Field Details"
           titleTypographyProps={{ variant: "h6", textAlign: "center", fontFamily: 'Poppins, sans serif' }}
           sx={{ backgroundColor: "#f5f5f5" }}
         />)}

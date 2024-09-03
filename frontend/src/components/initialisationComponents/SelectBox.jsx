@@ -15,11 +15,11 @@ function SelectBox(props) {
             id="demo-simple-select-autowidth"
             value={selectedValue}
             onChange={handleChangeSelectedValue}
-            autoWidth
+            fullWidth
             sx={{ fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
         >
             {applicantsSchemaColumnNames.map((columnName) => {
-                return (<MenuItem value={columnName} >
+                return (<MenuItem value={columnName} sx={{ fontWeight: '400', fontFamily: 'Maven Pro, sans serif' }}>
                     {columnName}
                 </MenuItem>)
             })}
