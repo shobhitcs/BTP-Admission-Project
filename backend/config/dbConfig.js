@@ -10,4 +10,13 @@ const connection = mysql.createConnection({
   insecureAuth: true,
 });
 
+// Connect to the database
+connection.connect((err) => {
+  if (err) {
+    console.error("Error connecting to the database:", err);
+    return;
+  }
+  console.log("Database connected");
+});
+
 module.exports = connection;
