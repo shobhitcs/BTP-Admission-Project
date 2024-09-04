@@ -1,4 +1,16 @@
-import { Autocomplete, Button, TextField, Snackbar, Alert, Container, Box, Typography, IconButton, Tooltip } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  TextField,
+  Snackbar,
+  Alert,
+  Container,
+  Box,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Search from "@mui/icons-material/Search";
@@ -13,6 +25,9 @@ function FilterOptions() {
   }
 
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const genderLabels = [{ label: "Male" }, { label: "Female" }];
   const categoryLabels = [
     { label: "GEN" },
@@ -95,16 +110,24 @@ function FilterOptions() {
   };
 
   return (
-    <Container sx={{ paddingTop: '100px' }}>
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+    <Container sx={{ padding: "100px 10px 40px 10px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+          gap: isMobile ? 2 : 1,
+        }}
+      >
         <Autocomplete
           value={coapId}
           onChange={(event, newValue) => setCoapId(newValue)}
           disablePortal
           id="coap-id-autocomplete"
           options={coapIds}
-          sx={{ width: '30%', mr: 1 }}
+          sx={{ width: isMobile ? "100%" : "30%" }}
           renderInput={(params) => <TextField {...params} label="COAP ID" />}
         />
         <Autocomplete
@@ -113,7 +136,7 @@ function FilterOptions() {
           disablePortal
           id="category-autocomplete"
           options={categoryLabels}
-          sx={{ width: '30%', mr: 1 }}
+          sx={{ width: isMobile ? "100%" : "30%" }}
           renderInput={(params) => <TextField {...params} label="Category" />}
         />
         <Autocomplete
@@ -122,23 +145,22 @@ function FilterOptions() {
           disablePortal
           id="gender-autocomplete"
           options={genderLabels}
-          sx={{ width: '30%', mr: 1 }}
+          sx={{ width: isMobile ? "100%" : "30%" }}
           renderInput={(params) => <TextField {...params} label="Gender" />}
         />
-        <Tooltip title="Search Records">
-          <IconButton
-            color="primary"
-            onClick={getData}
-            sx={{ ml: 2, fontSize: '2rem' }} // Adjust fontSize to make the icon larger
-          >
-            <Search />
-          </IconButton>
-        </Tooltip>
-      </Box>
 
-      {/* <Box sx={{ textAlign: 'center', mb: 2 }}>
-        <Typography variant="h4" color="textSecondary">Filtered Results</Typography>
-      </Box> */}
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={getData}
+          startIcon={<Search />} // Adds the Search icon before the text
+          sx={{ fontSize: "1rem" }}
+        >
+          Search Details
+        </Button>
+      </Box>
       <FilteredCandidatesTable data={data} />
       <Snackbar
         open={snackbarOpen}
@@ -148,7 +170,7 @@ function FilterOptions() {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

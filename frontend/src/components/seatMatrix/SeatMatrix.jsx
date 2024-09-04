@@ -83,14 +83,14 @@ function SeatMatrix(props) {
         gap: 3,
         mt: 4,
         mb: 4,
-        paddingTop: '80px'
+        padding: '80px 10px 10px 10px'
       }}
     >
       {/* <Typography variant="h4" color="textSecondary">
         Seat Matrix
       </Typography> */}
       {!isLoading && (
-        <TableContainer component={Paper} sx={{ width: "80%" }}>
+        <TableContainer component={Paper} sx={{ maxWidth: "1400px" }}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
@@ -107,7 +107,7 @@ function SeatMatrix(props) {
                   Set Seats
                 </TableCell>
                 <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Options
+                  Save
                 </TableCell>
               </TableRow>
             </TableHead>

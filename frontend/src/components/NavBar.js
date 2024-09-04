@@ -142,7 +142,7 @@ function NavBar() {
           <div style={{ display: "flex", alignItems: "center" }}>
             {/* <PersonIcon style={{ fontSize: 24, color: "white" }} /> */}
             Hi, 
-            <span style={{ color: "white", marginLeft: "8px" }}>
+            <span style={{ color: "#4CCD99", marginLeft: "8px" }}>
               {auth.username}
             </span>
 

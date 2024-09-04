@@ -13,8 +13,10 @@ function SeatMatrixRow(props) {
   }
 
   const [seats, setSeats] = useState(props.seatsAllocated);
+  const [savedSeats, setSavedSeats] = useState(props.seatsAllocated);
   const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const [message, setMessage] = useState("");
 
   const handleChangeSeats = (e) => {
     setSeats(e.target.value);
@@ -22,7 +24,8 @@ function SeatMatrixRow(props) {
 
   const handleSave = async () => {
     if (seats < props.seatsBooked) {
-      setErrorMessage("Seats booked are more than the seats allocated");
+      setMessage("Seats booked are more than the seats allocated");
+      setAlertType("error");
       setOpen(true);
       return;
     }
@@ -41,10 +44,14 @@ function SeatMatrixRow(props) {
           withCredentials: true,
         }
       );
-      window.location.reload();
+      setSavedSeats(seats); // Update the savedSeats state to reflect the new value
+      setMessage("Seats successfully updated!");
+      setAlertType("success");
     } catch (error) {
       console.log(error);
-      setErrorMessage("An error occurred while saving the data.");
+      setMessage("An error occurred while saving the data.");
+      setAlertType("error");
+    } finally {
       setOpen(true);
     }
   };
@@ -59,7 +66,7 @@ function SeatMatrixRow(props) {
   return (
     <>
       <TableRow
-        key={"key"}
+        key={props.category}
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
         <TableCell
@@ -69,7 +76,7 @@ function SeatMatrixRow(props) {
         >
           {props.category}
         </TableCell>
-        <TableCell align="center">{props.seatsAllocated}</TableCell>
+        <TableCell align="center">{savedSeats}</TableCell>
         <TableCell align="center">{props.seatsBooked}</TableCell>
         <TableCell align="center">
           <TextField
@@ -82,17 +89,17 @@ function SeatMatrixRow(props) {
           <Button
             variant="contained"
             onClick={handleSave}
-            style={{ background: "#343131" }}
+            style={{ background: "#36AA95" }}
             startIcon={<SaveIcon />}
           >
-            Save
+            Update
           </Button>
         </TableCell>
       </TableRow>
 
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {errorMessage}
+        <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%" }}>
+          {message}
         </Alert>
       </Snackbar>
     </>

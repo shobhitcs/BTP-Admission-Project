@@ -15,18 +15,18 @@ function FilteredCandidatesTable({ data }) {
   return (
     <Box sx={{ mt: 5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {data.length !== 0 ? (
-        <TableContainer component={Paper} sx={{ width: '90%', maxWidth: '1200px' }}>
+        <TableContainer component={Paper} sx={{ width: '100%', maxWidth: '1200px' }}>
           <Table aria-label="candidates table">
             <TableHead sx={{ backgroundColor: '#1B3058' }}>
               <TableRow>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>COAP ID</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Application Number</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Category</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Gender</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Max Gate Score</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>PWD</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>EWS</TableCell>
-                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Options</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>COAP ID</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>Application Number</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>Category</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>Gender</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>Max Gate Score</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>PWD</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>EWS</TableCell>
+                <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', fontFamily: 'Maven Pro,  sans serif' }}>Save</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
