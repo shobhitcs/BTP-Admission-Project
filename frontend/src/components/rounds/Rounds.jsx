@@ -100,19 +100,20 @@ function Rounds() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              backgroundColor: "#1B3058",
+              backgroundColor: "#343131",
               p: 2,
               borderRadius: 1,
-              color: "yellow",
+              color: "white",
             }}
           >
-            <Typography variant="h5">
-              Round-{selectedRoundIndex + 1} Details
+            <Typography variant="h6" sx={{ fontFamily: 'Ubuntu, sans serif' }}>
+              Round-{selectedRoundIndex + 1}
             </Typography>
             <Button
               variant="contained"
               color="error"
               onClick={handleReset}
+              sx={{ fontWeight: 600 }}
             >
               Reset
             </Button>
