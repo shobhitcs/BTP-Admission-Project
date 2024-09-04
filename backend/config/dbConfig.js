@@ -16,7 +16,17 @@ connection.connect((err) => {
     console.error("Error connecting to the database:", err);
     return;
   }
-  console.log("Database connected");
+  // console.log("Database connected");
+  console.log("Connected to the database");
+  // connection.query("SELECT * FROM users", (err, rows) => {
+  //   if (err) {
+  //     console.error("Error querying the database:", err);
+  //     return;
+  //   }
+  //   console.log("Fetched rows:", rows);
+  // });
+
+
 });
 
 module.exports = connection;
