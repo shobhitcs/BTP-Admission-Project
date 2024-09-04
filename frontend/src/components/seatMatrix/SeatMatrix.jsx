@@ -7,17 +7,17 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
   Snackbar,
   Alert,
   CircularProgress,
   Box,
+  Button,
 } from "@mui/material";
 import SeatMatrixRow from "./SeatMatrixRow";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function SeatMatrix(props) {
+function SeatMatrix() {
   const navigate = useNavigate();
 
   function getCookie(name) {
@@ -27,7 +27,8 @@ function SeatMatrix(props) {
   }
 
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
+  const [rows, setRows] = useState([]);
 
   // Snackbar states
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -56,6 +57,11 @@ function SeatMatrix(props) {
         )
         .then((res) => {
           setData(res.data.result);
+          setRows(res.data.result.map(({ category, seatsAllocated, seatsBooked }) => ({
+            category,
+            seats: seatsAllocated,
+            seatsBooked,
+          })));
           setIsLoading(false);
         })
         .catch((err) => {
@@ -74,72 +80,91 @@ function SeatMatrix(props) {
     }
   }, [navigate]);
 
+  const handleSeatsChange = (category, newSeats) => {
+    setRows(prevRows =>
+      prevRows.map(row =>
+        row.category === category ? { ...row, seats: newSeats } : row
+      )
+    );
+  };
+
+  const handleSaveAll = async () => {
+    try {
+      const jwtToken = getCookie("jwtToken");
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/seatMatrix/updateSeatsBulk`,
+        rows,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      setSnackbarMessage("Seats successfully updated!");
+      setSnackbarSeverity("success");
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage("An error occurred while saving the data.");
+      setSnackbarSeverity("error");
+    } finally {
+      setSnackbarOpen(true);
+    }
+  };
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 3,
-        mt: 4,
-        mb: 4,
-        padding: '80px 10px 10px 10px'
-      }}
-    >
-      {/* <Typography variant="h4" color="textSecondary">
-        Seat Matrix
-      </Typography> */}
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, mt: 4, mb: 4, padding: '80px 10px 10px 10px' }}>
       {!isLoading && (
-        <TableContainer component={Paper} sx={{ maxWidth: "1400px" }}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
-                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Category
-                </TableCell>
-                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Seats Allotted
-                </TableCell>
-                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Seats Booked
-                </TableCell>
-                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Set Seats
-                </TableCell>
-                <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif', }} align="center">
-                  Save
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data &&
-                data.map(({ category, seatsAllocated, seatsBooked }, index) => (
+        <>
+          <TableContainer component={Paper} sx={{ maxWidth: "1400px" }}>
+            <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
+                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                    Category
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                    Seats Allocated
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                    Seats Booked
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                    Set Seats
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map(row => (
                   <SeatMatrixRow
-                    key={index}
-                    category={category}
-                    seatsAllocated={seatsAllocated}
-                    seatsBooked={seatsBooked}
+                    key={row.category}
+                    category={row.category}
+                    seatsAllocated={row.seats}
+                    seatsBooked={row.seatsBooked}
+                    onSeatsChange={handleSeatsChange}
                   />
                 ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Button
+            variant="contained"
+            onClick={handleSaveAll}
+            style={{ background: "#36AA95", marginTop: "20px" }}
+          >
+            Update All
+          </Button>
+        </>
       )}
       {isLoading && (
         <Box sx={{ height: "80vh", display: "flex", alignItems: "center" }}>
           <CircularProgress />
         </Box>
       )}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

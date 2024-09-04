@@ -18,6 +18,7 @@ connection.connect((err) => {
   }
   // console.log("Database connected");
   console.log("Connected to the database");
+  // this is for testing purpose only 
   // connection.query("SELECT * FROM users", (err, rows) => {
   //   if (err) {
   //     console.error("Error querying the database:", err);
