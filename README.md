@@ -1,11 +1,12 @@
 # Automated Mtech Offers generator
 
-## The Problem
+## The Problem Statement
 
 For admission to M.Tech programs in most IITs/IISC, students must sit for national-level exams like GATE in which the online admission process is held through an entity known as COAP (Common Offer Acceptance Portal). It is a centralized counseling procedure for admission in PG Engineering courses in all participating IITs and IISC Institutes affiliated with it.
 The process starts with COAP sending all the student registration information to the institutes which is then filtered and sorted by the institute’s office staff. Based on it, Offer Letters are generated separately for each branch. This data is then sent back to the COAP which then takes input from the students through their website and resends the updated status data back to the institutes. This process is repeated as further rounds are held.
 This data give and take from COAP to institutes and vice-versa demands a lot of time and manual work from the institute's office workforce and the saturation of data increases with every round as also the escalating probability of error during the segregation of data as there will be multiple files generation during the process.
 
+testing
 ## Objective
 
 Our goal is to save time and effort by automating this Data organizing process, by creating an automated tool that will take Excel files as inputs from the front end and then send the data to the server in the backend for processing and storing the data in a centralized Database.

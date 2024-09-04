@@ -8,6 +8,7 @@ var mysql = require("mysql2");
     outgoing data: seat matrix table as JSON object
 */
 
+
 router.get("/seatMatrixData", isAuthenticated, async (req, res) => {
   try {
     var con = mysql

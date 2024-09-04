@@ -8,3 +8,5 @@ var usersSchema = `(
 )`;
 
 module.exports = { usersSchema };
+
+// This is an example of a schema file. 
