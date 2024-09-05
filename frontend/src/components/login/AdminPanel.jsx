@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import {
   Container,
   Typography,
@@ -22,7 +24,7 @@ import {
   InputAdornment,
   Snackbar,
 } from "@mui/material";
-import { AddCircle, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -316,225 +318,288 @@ function AdminPanel() {
   };
 
   return (
-    <Container maxWidth="md" className="pt-10" style={{}}>
+    <Container maxWidth="200px" className="pt-10" sx={{ padding: '100px 10px 30px 10px', display: 'flex', justifyContent: 'center' }}>
       <Grid
         container
-        spacing={2}
         alignItems="center"
-        justify="center"
-        style={{ height: "100%" }}
+        justifyContent="center"
+        style={{ height: "100%", maxWidth: '1100px', margin: '0 auto' }}
       >
         <Grid item xs={12}>
-          <Typography variant="h4" gutterBottom align="center">
+          <Typography
+            variant="h5"
+            gutterBottom
+            align="center"
+            sx={{ fontFamily: 'Ubuntu, sans-serif', fontWeight: 600, mb: '20px' }}
+          >
             Admin Panel
           </Typography>
         </Grid>
-        <Grid item xs={12}>
-          <Paper
-            elevation={3}
-            style={{ padding: 20, maxWidth: "70%", margin: "0 auto" }}
-          >
-            <Typography variant="h6" gutterBottom align="center">
-              Add User
-            </Typography>
-            {duplicateEntryError && (
-              <Typography variant="body2" color="error" align="center">
-                {duplicateEntryError}
-              </Typography>
-            )}
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <Snackbar
-                  open={
-                    error === "You can't add a user with the username 'admin'."
-                  }
-                  autoHideDuration={6000}
-                  onClose={() => setError("")}
-                  message="You can't add admin"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={handleTogglePasswordVisibility}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
 
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Branch</InputLabel>
-                  <Select
-                    value={branch}
-                    onChange={(e) => setBranch(e.target.value)}
-                  >
-                    {programs.map((program) => (
-                      <MenuItem key={program} value={program}>
-                        {program}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddCircle />}
-                  onClick={handleSubmit}
-                  fullWidth
-                >
-                  Add User
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Add/Delete Branch Section*/}
-        <Grid item xs={12}>
-          <Paper
-            elevation={3}
-            style={{
-              padding: 20,
-              marginTop: 20,
-              maxWidth: "70%",
-              margin: "0 auto",
-            }}
-          >
-            <Typography variant="h6" gutterBottom align="center">
-              Manage Branches
-            </Typography>
-            {branchExistsError && (
-              <Typography variant="body2" color="error" align="center">
-                {branchExistsError}
-              </Typography>
-            )}
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="New Branch"
-                  value={newProgram}
-                  onChange={(e) => setNewProgram(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddBranch}
-                  fullWidth
-                >
-                  Add Branch
-                </Button>
-              </Grid>
-            </Grid>
-            <Typography variant="body2" color="error" align="center">
-              Note: Deleting a branch will delete all users associated with that
-              branch.
-            </Typography>
-            <FormControl fullWidth style={{ marginTop: 10 }}>
-              <InputLabel>Delete Branch</InputLabel>
-              <Select
-                value=""
-                onChange={(e) => handleDeleteBranch(e.target.value)}
+        {/* Responsive layout for Add User and Manage Branches sections */}
+        <Grid
+          container
+          spacing={2}
+          sx={{ mb: '50px', display: 'flex', justifyContent: 'space-between' }}
+        >
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                padding: 3,
+                maxWidth: 500,
+                margin: { xs: '0 auto 20px', md: '0 auto 0 0' },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                align="center"
+                sx={{ fontWeight: 'bold', fontFamily: 'Poppins, sans-serif' }}
               >
-                {programs.map((program) => (
-                  <MenuItem key={program} value={program}>
-                    {program}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
+                Add User
+              </Typography>
+
+              {duplicateEntryError && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  align="center"
+                  sx={{ mb: 2 }}
+                >
+                  {duplicateEntryError}
+                </Typography>
+              )}
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    sx={{ marginBottom: 2 }}
+                  />
+                  <Snackbar
+                    open={error === "You can't add a user with the username 'admin'."}
+                    autoHideDuration={6000}
+                    onClose={() => setError('')}
+                    message="You can't add admin"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    sx={{ marginBottom: 2 }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ marginBottom: 2 }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                    <InputLabel>Branch</InputLabel>
+                    <Select
+                      fullWidth
+                      value={branch}
+                      onChange={(e) => setBranch(e.target.value)}
+                    >
+                      {programs.map((program) => (
+                        <MenuItem key={program} value={program}>
+                          {program}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<PersonAddIcon />}
+                    onClick={handleSubmit}
+                    fullWidth
+                    sx={{ padding: '10px 0', background: '#7A1CAC' }}
+                  >
+                    Add User
+                  </Button>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                padding: 3,
+                marginTop: { xs: 3, md: 0 },
+                maxWidth: 500,
+                margin: { xs: '0 auto', md: '0 0 0 auto' },
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                align="center"
+                sx={{ fontWeight: 'bold', fontFamily: 'Poppins, sans-serif' }}
+              >
+                Manage Branches
+              </Typography>
+
+              {branchExistsError && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  align="center"
+                  sx={{ mb: 2 }}
+                >
+                  {branchExistsError}
+                </Typography>
+              )}
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="New Branch"
+                    value={newProgram}
+                    onChange={(e) => setNewProgram(e.target.value)}
+                    sx={{ marginBottom: 1 }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddBranch}
+                    startIcon={<AssuredWorkloadIcon />}
+                    fullWidth
+                    sx={{ padding: '10px 0', background: '#7A1CAC' }}
+                  >
+                    Add Branch
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Typography
+                variant="body2"
+                color="error"
+                align="center"
+                sx={{ marginTop: 2 }}
+              >
+                Note: Deleting a branch will delete all users associated with that branch.
+              </Typography>
+
+              <FormControl fullWidth sx={{ marginTop: 2 }}>
+                <InputLabel>Delete Branch</InputLabel>
+                <Select
+                  value=""
+                  onChange={(e) => handleDeleteBranch(e.target.value)}
+                >
+                  {programs.map((program) => (
+                    <MenuItem key={program} value={program}>
+                      {program}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Paper>
+          </Grid>
         </Grid>
 
-        {/* User View Section*/}
-        <Grid item xs={12}>
+
+        {/* User View Section */}
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
           <Paper
             elevation={3}
-            style={{
-              padding: 20,
-              marginTop: 20,
-              maxHeight: "calc(100vh - 480px)",
-              maxWidth: "100%",
-              overflowY: "auto",
-              marginBottom: 20,
+            sx={{
+              padding: '20px 10px 50px 10px',
+              margin: '0px',
+              width: '100%',
             }}
           >
-            <Typography variant="h6" gutterBottom align="center">
+            <Typography variant="h6" gutterBottom align="center" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
               Added Users
             </Typography>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+
+            <Grid container justifyContent="space-between" alignItems="center" sx={{ marginBottom: 2 }}>
               <TextField
-                label="Search By Username"
                 variant="outlined"
+                placeholder="Search By Username"
                 fullWidth
                 value={searchTerm}
                 onChange={handleSearchTermChange}
-                style={{ marginBottom: 10, width: "50%" }} // Set width to 50%
+                sx={{
+                  maxWidth: '50%',
+                  backgroundColor: 'white',
+                  borderRadius: 25,
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon />
                     </InputAdornment>
                   ),
-                  style: {
-                    borderRadius: 25, // Adjust as needed
-                    backgroundColor: "white",
-                  },
                 }}
               />
-            </div>
+
+              <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+                <Select
+                  value={branchFilter}
+                  onChange={handleBranchFilterChange}
+                  displayEmpty
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: 'white',
+                  }}
+                >
+                  <MenuItem value="All">All Branches</MenuItem>
+                  {programs.map((program) => (
+                    <MenuItem key={program} value={program}>
+                      {program}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+            </Grid>
+
             <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Username</TableCell>
-                    <TableCell align="center">
-                      <Grid container alignItems="center">
-                        <Grid item>
-                          <FormControl style={{ marginLeft: 10 }}>
-                            <InputLabel>Branch</InputLabel>
-                            <Select
-                              value={branchFilter}
-                              onChange={handleBranchFilterChange}
-                            >
-                              <MenuItem value="All">All</MenuItem>
-                              {programs.map((program) => (
-                                <MenuItem key={program} value={program}>
-                                  {program}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-                      </Grid>
-                    </TableCell>
-                    <TableCell>Action</TableCell>
-                    <TableCell>New Password</TableCell>
-                    <TableCell>Update</TableCell>
+                    <TableCell align="center">Branch</TableCell>
+                    <TableCell align="center">Action</TableCell>
+                    <TableCell align="center">New Password</TableCell>
+                    <TableCell align="center">Update</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -542,40 +607,33 @@ function AdminPanel() {
                     <TableRow key={user.id}>
                       <TableCell>{user.username}</TableCell>
                       <TableCell align="center">{user.branch}</TableCell>
-
-                      {user.isAdmin ? (
-                        <TableCell>
-                          <IconButton disabled color="secondary">
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      ) : (
-                        <TableCell>
-                          <IconButton
-                            onClick={() => handleDeleteUser(user.id)}
-                            color="secondary"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      )}
-
-                      <TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => handleDeleteUser(user.id)}
+                          color="secondary"
+                          disabled={user.isAdmin}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell align="center">
                         <TextField
                           type="password"
                           value={newPasswordMap[user.id] || ""}
-                          onChange={(e) =>
-                            handleNewPasswordChange(user.id, e.target.value)
-                          }
+                          onChange={(e) => handleNewPasswordChange(user.id, e.target.value)}
+                          variant="outlined"
+                          size="small"
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <Button
                           variant="contained"
                           color="primary"
                           onClick={() => handleUpdatePassword(user.id)}
+                          size="small"
+                          sx={{ backgroundColor: '#36AA95' }}
                         >
-                          Update Password
+                          Update
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -585,6 +643,7 @@ function AdminPanel() {
             </TableContainer>
           </Paper>
         </Grid>
+
 
         <Snackbar
           open={openCreateSnackbar}
@@ -608,6 +667,7 @@ function AdminPanel() {
         message="User Deleted successfully!"
       />
     </Container>
+
   );
 }
 

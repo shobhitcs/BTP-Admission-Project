@@ -8,17 +8,17 @@ function FilteredCandidatesTableRow(props) {
         <TableRow
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
-            <TableCell component="th" align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>
+            <TableCell component="th" align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>
                 {props.coap}
             </TableCell>
-            <TableCell component="th" align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>
+            <TableCell component="th" align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>
                 {props.appno}
             </TableCell>
-            <TableCell align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>{props.category}</TableCell>
-            <TableCell align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>{props.gender}</TableCell>
-            <TableCell align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>{props.maxgatescore}</TableCell>
-            <TableCell align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>{props.ews}</TableCell>
-            <TableCell align="center" sx={{ fontFamily: 'Maven Pro,  sans serif' }}>{props.pwd}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>{props.category}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>{props.gender}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>{props.maxgatescore}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>{props.ews}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: 'Barlow,  sans serif', fontWeight: 600 }}>{props.pwd}</TableCell>
 
             <TableCell align="center" >
                 <Link to={`/search/${props.coap}`}>

@@ -158,7 +158,7 @@ function FilterOptions() {
           startIcon={<Search />} // Adds the Search icon before the text
           sx={{ fontSize: "1rem" }}
         >
-          Search Details
+          Find Details
         </Button>
       </Box>
       <FilteredCandidatesTable data={data} />

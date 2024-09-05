@@ -1,25 +1,34 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { Button, Snackbar, Alert, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  MenuItem,
+  Select,
+  Button,
+  Snackbar,
+  Alert,
+  LinearProgress,
+  Grid,
+} from "@mui/material";
 
-function CandidateDisplay(props) {
-  function getCookie(name) {
+function CandidateDisplay() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const { coapid } = useParams();
+  const [status, setStatus] = useState("");
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
-  }
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [data, setData] = React.useState(null);
-  const { coapid } = useParams();
-  const [status, setStatus] = React.useState("");
-  const row1 = ["FullName", "ApplicationNumber", "COAP"];
+  };
 
-  // for alerts
-  const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const handleChange = (event) => {
     setStatus(event.target.value);
   };
@@ -33,42 +42,35 @@ function CandidateDisplay(props) {
 
   useEffect(() => {
     setIsLoading(true);
-    try {
-      const jwtToken = getCookie("jwtToken");
-      axios
-        .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/search/getinfo/${coapid}`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": true,
-              Authorization: `Bearer ${jwtToken}`, // Include JWT token in Authorization header
-            },
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          setData(res.data.result);
-          console.log(res.data.result);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setErrorMessage(err.message);
-          setOpen(true);
-          setIsLoading(false);
-        });
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
-  }, []);
+    const jwtToken = getCookie("jwtToken");
+    axios
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/search/getinfo/${coapid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        setData(res.data.result);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setErrorMessage(err.message);
+        setOpen(true);
+        setIsLoading(false);
+      });
+  }, [coapid]);
 
   const handleUpdate = async () => {
     try {
       const jwtToken = getCookie("jwtToken");
-      let res = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/candidate/manualUpdate`,
         { coap: coapid },
         {
@@ -88,91 +90,85 @@ function CandidateDisplay(props) {
   };
 
   return (
-    <div className="w-full">
-      {!isLoading && (
-        <div className="flex flex-col w-[90%] justify-center items-center mt-10 m-auto">
-          <div className="w-full  bg-[#1B3058] text-white h-14 flex justify-center items-center text-2xl">
-            Candidate Details
-          </div>
-          <div className="w-full flex flex-col">
-            <div className="w-full flex-col">
-              <div className="w-full flex justify-center">
-                {data != null &&
-                  row1.map((key) => {
-                    // console.log("x",key)
-                    return (
-                      <div
-                        className="flex flex-col w-[350px] justify-center items-center p-2 h-fit border-grey-200 border-[1px] box-border"
-                        key={key}
-                      >
-                        <p className=" text-2xl text-[#FFCB00]">{key}</p>
-                        <p className=" text-black-400 overflow-clip text-xl">
-                          {" "}
-                          {data[0][key] === null || data[0][key] === ""
-                            ? "NULL"
-                            : data[0][key]}
-                        </p>
-                      </div>
-                    );
-                  })}
-              </div>
-              <div></div>
-            </div>
-            <div className="flex flex-wrap max-w-full h-fit shadow-lg  p-4 justify-center">
-              {data != null &&
-                Object.keys(data[0]).map((key) => {
-                  // console.log("x",key)
-                  if (!row1.includes(key)) {
-                    return (
-                      <div
-                        className="flex flex-col w-[200px] p-2 h-fit border-grey-200 border-[1px] box-border overflow-clip"
-                        key={key}
-                      >
-                        <p className="text-gray-400 text-lg ">{key}</p>
-                        <p className=" text-black-400 overflow-clip">
-                          {" "}
-                          {data[0][key] === null || data[0][key] === ""
-                            ? "NULL"
-                            : data[0][key]}
-                        </p>
-                      </div>
-                    );
-                  } else {
-                    return <div></div>;
-                  }
-                })}
-            </div>
-          </div>
-          {data != null &&
-            (data[0]["Accepted"] === "Y" || data[0]["Accepted"] === "R") && (
-              <div className="flex w-[50%] justify-center items-center gap-10  mt-10">
-                <div className="flex w-fit justify-center items-center ">
-                  <p className="text-2xl">Update Status</p>
-                </div>
-                <Select
-                  labelId="status"
-                  id="status"
-                  value={status}
-                  label="status"
-                  onChange={handleChange}
-                  className="w-[400px]"
-                >
-                  <MenuItem value={"N"}>Reject</MenuItem>
-                </Select>
-                <Button variant="contained" onClick={handleUpdate}>
-                  Update
-                </Button>
-              </div>
-            )}
-        </div>
+    <Box sx={{ padding: '100px 10px 30px 10px' }}>
+      {isLoading ? (
+        <LinearProgress />
+      ) : (
+        <Box sx={{ maxWidth: "1000px", margin: "auto" }}>
+          <Card sx={{ mb: 4, backgroundColor: "#1B3058", color: "white" }}>
+            <CardContent>
+              <Typography variant="h5" align="center" sx={{ fontFamily: 'Maven pro, sans serif'}}>
+                Candidate Details
+              </Typography>
+            </CardContent>
+          </Card>
+          {data && (
+            <>
+              <Grid container spacing={2} justifyContent="center">
+                {["FullName", "ApplicationNumber", "COAP"].map((key) => (
+                  <Grid item xs={12} sm={6} md={4} key={key}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="h6" color="text.secondary">
+                          {key}
+                        </Typography>
+                        <Typography variant="body1">
+                          {data[0][key] || "NULL"}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+              <Grid container spacing={2} sx={{ mt: 4 }}>
+                {Object.keys(data[0])
+                  .filter((key) => !["FullName", "ApplicationNumber", "COAP"].includes(key))
+                  .map((key) => (
+                    <Grid item xs={12} sm={6} md={4} key={key}>
+                      <Card variant="outlined">
+                        <CardContent>
+                          <Typography variant="subtitle1" color="text.secondary">
+                            {key}
+                          </Typography>
+                          <Typography variant="body2">
+                            {data[0][key] || "NULL"}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+              </Grid>
+              {data[0]["Accepted"] === "Y" || data[0]["Accepted"] === "R" ? (
+                <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+                  <Typography variant="h6" sx={{ mr: 2 }}>
+                    Update Status:
+                  </Typography>
+                  <Select
+                    value={status}
+                    onChange={handleChange}
+                    sx={{ mr: 2, minWidth: 200 }}
+                  >
+                    <MenuItem value={"N"}>Reject</MenuItem>
+                  </Select>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleUpdate}
+                  >
+                    Update
+                  </Button>
+                </Box>
+              ) : null}
+            </>
+          )}
+        </Box>
       )}
-      {isLoading &&  <CircularProgress /> }
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           {errorMessage}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 }
 
