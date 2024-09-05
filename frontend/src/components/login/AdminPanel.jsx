@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
   Container,
   Typography,
@@ -23,6 +24,7 @@ import {
   TableBody,
   InputAdornment,
   Snackbar,
+  Alert
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +46,10 @@ function AdminPanel() {
   const [showPassword, setShowPassword] = useState(false);
   const [openCreateSnackbar, setOpenCreateSnackbar] = useState(false);
   const [openDeleteSnackbar, setOpenDeleteSnackbar] = useState(false);
+  const [openDeleteUserSnackbar, setOpenDeleteUserSnackbar] = useState(false);
   const [openUpdateSnackbar, setOpenUpdateSnackbar] = useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [openAddBranchSnackbar, setOpenAddBranchSnackbar] = useState(false);
   const [newPasswordMap, setNewPasswordMap] = useState({});
   const [branchFilter, setBranchFilter] = useState("All");
   const [programs, setPrograms] = useState([]);
@@ -136,7 +141,7 @@ function AdminPanel() {
       .then((response) => {
         if (response.ok) {
           setUsers(users.filter((user) => user.id !== userId));
-          setOpenDeleteSnackbar(true);
+          setOpenDeleteUserSnackbar(true);
         } else {
           return response.json().then((data) => {
             console.error("Error deleting user:", data.error);
@@ -276,6 +281,7 @@ function AdminPanel() {
           setError(""); // Clear any previous errors
           setDuplicateEntryError(null); // Clear duplicate entry error
           setBranchExistsError(null); // Clear branch exists error
+          setOpenAddBranchSnackbar(true);
         } else {
           return response.json().then((data) => {
             setBranchExistsError(data.error || "Failed to add new branch.");
@@ -288,11 +294,10 @@ function AdminPanel() {
       });
   };
 
+  const [selectedBranch, setSelectedBranch] = useState("");
+
   const handleDeleteBranch = (branchName) => {
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(
-      `Are you sure that you want to delete the branch "${branchName}"?`
-    );
+    const isConfirmed = branchName !== ""
 
     if (isConfirmed) {
       fetch(
@@ -305,14 +310,17 @@ function AdminPanel() {
           if (response.ok) {
             setPrograms(programs.filter((program) => program !== branchName));
             setUsers(users.filter((user) => user.branch !== branchName));
+            setOpenDeleteSnackbar(true)
           } else {
             return response.json().then((data) => {
               setError(data.error || "Failed to delete branch.");
+              setOpenErrorSnackbar(true);
             });
           }
         })
         .catch((error) => {
           setError("Failed to delete branch. Please try again later.");
+          setOpenErrorSnackbar(true);
         });
     }
   };
@@ -378,6 +386,7 @@ function AdminPanel() {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    color="secondary"
                     label="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -396,6 +405,7 @@ function AdminPanel() {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    color="secondary"
                     label="Password"
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -418,9 +428,11 @@ function AdminPanel() {
 
                 <Grid item xs={12}>
                   <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <InputLabel>Branch</InputLabel>
+                    <InputLabel color="secondary">Branch</InputLabel>
                     <Select
                       fullWidth
+                      label="Branch"
+                      color="secondary"
                       value={branch}
                       onChange={(e) => setBranch(e.target.value)}
                     >
@@ -440,7 +452,7 @@ function AdminPanel() {
                     startIcon={<PersonAddIcon />}
                     onClick={handleSubmit}
                     fullWidth
-                    sx={{ padding: '10px 0', background: '#7A1CAC' }}
+                    style={{ padding: '10px 0', background: '#7A1CAC' }}
                   >
                     Add User
                   </Button>
@@ -487,6 +499,7 @@ function AdminPanel() {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    color="secondary"
                     label="New Branch"
                     value={newProgram}
                     onChange={(e) => setNewProgram(e.target.value)}
@@ -501,35 +514,45 @@ function AdminPanel() {
                     onClick={handleAddBranch}
                     startIcon={<AssuredWorkloadIcon />}
                     fullWidth
-                    sx={{ padding: '10px 0', background: '#7A1CAC' }}
+                    style={{ padding: '10px 0', background: '#7A1CAC' }}
                   >
                     Add Branch
                   </Button>
                 </Grid>
               </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel color="secondary">Delete Branch</InputLabel>
+                    <Select
+                      value={selectedBranch}
+                      label="Delete Branch"
+                      color="secondary"
+                      onChange={(e) => setSelectedBranch(e.target.value)}
+                    >
+                      {programs.map((program) => (
+                        <MenuItem key={program} value={program}>
+                          {program}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-              <Typography
-                variant="body2"
-                color="error"
-                align="center"
-                sx={{ marginTop: 2 }}
-              >
-                Note: Deleting a branch will delete all users associated with that branch.
-              </Typography>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleDeleteBranch(selectedBranch)}
+                    startIcon={<DeleteForeverIcon />}
+                    fullWidth
+                    style={{ padding: '10px 0', background: '#7A1CAC' }}
+                  >
+                    Remove Branch
+                  </Button>
+                </Grid>
+              </Grid>
 
-              <FormControl fullWidth sx={{ marginTop: 2 }}>
-                <InputLabel>Delete Branch</InputLabel>
-                <Select
-                  value=""
-                  onChange={(e) => handleDeleteBranch(e.target.value)}
-                >
-                  {programs.map((program) => (
-                    <MenuItem key={program} value={program}>
-                      {program}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Paper>
           </Grid>
         </Grid>
@@ -545,69 +568,81 @@ function AdminPanel() {
               width: '100%',
             }}
           >
-            <Typography variant="h6" gutterBottom align="center" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+            <Typography variant="h6" gutterBottom align="center" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold', marginBottom: 2 }}>
               Added Users
             </Typography>
 
-            <Grid container justifyContent="space-between" alignItems="center" sx={{ marginBottom: 2 }}>
-              <TextField
-                variant="outlined"
-                placeholder="Search By Username"
-                fullWidth
-                value={searchTerm}
-                onChange={handleSearchTermChange}
-                sx={{
-                  maxWidth: '50%',
-                  backgroundColor: 'white',
-                  borderRadius: 25,
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-                <Select
-                  value={branchFilter}
-                  onChange={handleBranchFilterChange}
-                  displayEmpty
+            <Grid container
+              alignItems="center"
+              justifyContent="center" sx={{ padding: '0 10px 0 10px' }}>
+              {/* Search Field */}
+              <Grid xs={12} md={8} >
+                <TextField
+                  variant="outlined"
+                  placeholder="Search By Username"
+                  fullWidth
+                  value={searchTerm}
+                  onChange={handleSearchTermChange}
                   sx={{
-                    borderRadius: 2,
                     backgroundColor: 'white',
+                    marginBottom: { xs: '10px', md: 0 }, // Adds margin on mobile only
+                    maxWidth: '400px',
+                    borderRadius: 2,
                   }}
-                >
-                  <MenuItem value="All">All Branches</MenuItem>
-                  {programs.map((program) => (
-                    <MenuItem key={program} value={program}>
-                      {program}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
+              {/* Branch Filter */}
+              <Grid xs={12} md={4} >
+                <FormControl variant="outlined" fullWidth>
+                  <Select
+                    value={branchFilter}
+                    onChange={handleBranchFilterChange}
+                    displayEmpty
+                    sx={{
+                      maxWidth: '400px',
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }}
+                  >
+                    <MenuItem value="All">All Branches</MenuItem>
+                    {programs.map((program) => (
+                      <MenuItem key={program} value={program}>
+                        {program}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
+
+
+
 
             <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Username</TableCell>
-                    <TableCell align="center">Branch</TableCell>
-                    <TableCell align="center">Action</TableCell>
-                    <TableCell align="center">New Password</TableCell>
-                    <TableCell align="center">Update</TableCell>
+                    <TableCell sx={{ fontFamily: 'Arial, sans serif', fontWeight: 600 }}>Username</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'Arial, sans serif', fontWeight: 600 }}>Branch</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'Arial, sans serif', fontWeight: 600 }}>Delete</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'Arial, sans serif', fontWeight: 600 }}>New Password</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'Arial, sans serif', fontWeight: 600 }}>Update</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody  >
                   {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.username}</TableCell>
-                      <TableCell align="center">{user.branch}</TableCell>
-                      <TableCell align="center">
+                    <TableRow key={user.id} sx={{ fontFamily: 'Poppins, sans serif' }}>
+                      <TableCell sx={{ fontFamily: 'Poppins, sans serif' }}>{user.username}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'Poppins, sans serif' }}>{user.branch}</TableCell>
+                      <TableCell align="center" >
                         <IconButton
                           onClick={() => handleDeleteUser(user.id)}
                           color="secondary"
@@ -623,6 +658,7 @@ function AdminPanel() {
                           onChange={(e) => handleNewPasswordChange(user.id, e.target.value)}
                           variant="outlined"
                           size="small"
+                          sx={{ fontFamily: 'Poppins, sans serif', minWidth: '200px' }}
                         />
                       </TableCell>
                       <TableCell align="center">
@@ -631,9 +667,9 @@ function AdminPanel() {
                           color="primary"
                           onClick={() => handleUpdatePassword(user.id)}
                           size="small"
-                          sx={{ backgroundColor: '#36AA95' }}
+                          style={{ backgroundColor: '#7A1CAC', fontFamily: 'Poppins, sans serif' }}
                         >
-                          Update
+                          SAVE
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -645,27 +681,91 @@ function AdminPanel() {
         </Grid>
 
 
-        <Snackbar
-          open={openCreateSnackbar}
-          autoHideDuration={6000}
-          onClose={() => setOpenCreateSnackbar(false)}
-          message="User created successfully!"
-        />
       </Grid>
+      <Snackbar
+        open={openCreateSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenCreateSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenCreateSnackbar(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          User created successfully!
+        </Alert>
+      </Snackbar>
+
+
+      <Snackbar
+        open={openAddBranchSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenAddBranchSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenAddBranchSnackbar(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Branch added successfully!
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={openUpdateSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenUpdateSnackbar(false)}
-        message="Password updated successfully!"
-      />
+      >
+        <Alert
+          onClose={() => setOpenUpdateSnackbar(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Password updated successfully!
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={openDeleteSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenDeleteSnackbar(false)}
-        message="User Deleted successfully!"
-      />
+      >
+        <Alert
+          onClose={() => setOpenDeleteSnackbar(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Branch deleted successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={openDeleteUserSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenDeleteUserSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenDeleteUserSnackbar(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          User deleted successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={openErrorSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenErrorSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenErrorSnackbar(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          Unexpected Error!
+        </Alert>
+      </Snackbar>
     </Container>
 
   );
