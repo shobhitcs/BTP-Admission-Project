@@ -121,12 +121,13 @@ function SeatMatrix() {
   };
 
   // List of main categories
-  const mainCategories = ['COMMON', 'EWS', 'GEN', 'OBC', 'SC', 'ST'];
+  const mainCategories = ['COMMON_PWD', 'EWS', 'GEN', 'OBC', 'SC', 'ST'];
 
   const getSubcategories = (mainCategory) => {
     return rows.filter(row => row.category.startsWith(mainCategory));
   };
 
+  
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, mt: 4, mb: 4, padding: '80px 10px 10px 10px' }}>
       {!isLoading && (
@@ -149,12 +150,15 @@ function SeatMatrix() {
                   </TableCell>
                 </TableRow>
               </TableHead>
+              
               <TableBody>
                 {mainCategories.map(mainCategory => (
                   <React.Fragment key={mainCategory}>
                     {/* Main Category Row */}
                     <TableRow onClick={() => toggleCategory(mainCategory)} sx={{ backgroundColor: "#e0e0e0", cursor: "pointer" }}>
-                      <TableCell colSpan={4} align="center">
+                      <TableCell colSpan={4} align="center"
+                       sx={{ fontSize: 23, fontWeight: 'bold', fontFamily: 'Maven Pro, sans-serif' }}
+                      >
                         <strong>{mainCategory}</strong>
                       </TableCell>
                     </TableRow>
