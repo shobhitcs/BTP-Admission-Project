@@ -32,6 +32,7 @@ router.get("/seatMatrixData", isAuthenticated, async (req, res) => {
   }
 });
 
+
 // Route to update seats in bulk
 router.post("/updateSeatsBulk", isAuthenticated, async (req, res) => {
   const updates = req.body;

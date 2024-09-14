@@ -20,16 +20,17 @@ function SeatMatrixRow({ category, seatsAllocated, seatsBooked, onSeatsChange })
       <TableCell component="th" scope="row" style={{ fontSize: "15px", fontWeight: "bold", color: "#343131" }}>
         {category}
       </TableCell>
-      <TableCell align="center">{seatsAllocated}</TableCell>
-      <TableCell align="center">{seatsBooked}</TableCell>
       <TableCell align="center">
         <TextField type="number" onChange={handleChangeSeats} value={seats} />
       </TableCell>
+      <TableCell align="center">{seatsAllocated}</TableCell>
+      <TableCell align="center">{seatsBooked}</TableCell>
     </TableRow>
   );
 }
 
 export default SeatMatrixRow;
+
 
 
 // --------------------- OLD CODE ---------------------
