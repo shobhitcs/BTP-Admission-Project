@@ -17,7 +17,8 @@ async function updateDecision(
     const query = `SELECT OfferedRound, RetainRound, RejectOrAcceptRound FROM applicationstatus WHERE COAP = ? AND branch = ?;`;
     // console.log("Query:", query, "Parameters:", [currCOAP, branch]);
     const [checkPreviousStatus] = await con.query(query, [currCOAP, branch]);
-    // console.log("Query result:", checkPreviousStatus);
+    console.log("COAP ID:", currCOAP);
+    console.log("Query result:", checkPreviousStatus);
     if (checkPreviousStatus.length === 0) {
       try {
         const insertQuery = `INSERT INTO applicationstatus (COAP, Offered, Accepted, RejectOrAcceptRound, branch) VALUES (?, '', 'E', ?, ?)`;
@@ -26,6 +27,7 @@ async function updateDecision(
         //   round,
         //   branch,
         // ]);
+        console.log(currCOAP,"inserted")
         await con.query(insertQuery, [currCOAP, round, branch]);
       } catch (error) {
         throw error;
@@ -34,7 +36,12 @@ async function updateDecision(
       
     else {
             try {
-                var [updatequery]=await con.query(`UPDATE applicationstatus SET Accepted = 'N' WHERE COAP = '${currCOAP}' AND Accepted != 'Y'`);
+
+                //Code after correction in query
+                var [updatequery]=await con.query(`UPDATE applicationstatus SET Accepted = 'E' WHERE COAP = '${currCOAP}' AND Accepted != 'Y'`);
+                
+                // OLD CODE WITH PREDICTED BUG
+                // var [updatequery]=await con.query(`UPDATE applicationstatus SET Accepted = 'N' WHERE COAP = '${currCOAP}' AND Accepted != 'Y'`);
             } catch (error) {
                 throw error;
             }
@@ -82,9 +89,9 @@ async function updateStatusConsolidatedFile(
         branch,
       ]);
       // console.log("Query result:", isCS);
-      if (isCS[0].count !== 0) {
-        // console.log("Query result mahan:", isCS);
-      }
+      // if (isCS[0].count !== 0) {
+      //   // console.log("Query result mahan:", isCS);
+      // }
 
       if (isCS[0].count === 1) {
         await updateDecision(

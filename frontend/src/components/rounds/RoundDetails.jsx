@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Snackbar, Alert, CircularProgress, Box, Typography, Stack, IconButton, Card, CardContent, LinearProgress } from "@mui/material";
+import { Button, Snackbar, Alert, Box, Typography, Stack, Card, CardContent, LinearProgress } from "@mui/material";
 import Download from "@mui/icons-material/Download";
 import fileDownload from "js-file-download";
 import RoundUpdateFiles from "./RoundUpdateFiles";
@@ -8,7 +8,7 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import AutoModeIcon from '@mui/icons-material/AutoMode';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 
-function RoundDetails({ roundNumber }) {
+function RoundDetails({ roundNumber, setR, setSRI }) {
   const [isLoading, setIsLoading] = useState(true);
   const [offersGenerated, setOffersGenerated] = useState(false);
   const [roundStatus, setRoundStatus] = useState(null);
@@ -112,22 +112,24 @@ function RoundDetails({ roundNumber }) {
           {isLoading && (<LinearProgress />)}
           <CardContent>
             <Stack direction="row" spacing={2} alignItems="center">
-              <Button
+              {!offersGenerated && (<Button
                 variant="contained"
                 color={offersGenerated ? "warning" : "primary"}
                 onClick={generateOffers}
                 disabled={isLoading}
                 startIcon={offersGenerated ? <AutoModeIcon /> : <AutorenewIcon />}
               >
-                {offersGenerated ? "Regenerate" : "Generate"}
-              </Button>
+                {/* {offersGenerated ? "Regenerate" : "Generate"} */}
+                Generate
+              </Button>)}
               {offersGenerated && (
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={handleDownloadOffersFile}
                   startIcon={<Download />}
                 >
-                  Download
+                  Download Offers
                 </Button>
               )}
             </Stack>
@@ -139,19 +141,19 @@ function RoundDetails({ roundNumber }) {
               <Box>
                 {offersGenerated ? (
                   <Stack spacing={2}>
-                    <RoundUpdateFiles
+                    <RoundUpdateFiles setR = {setR} setSRI = {setSRI}
                       fileName={"IITGCandidateDecision"}
                       isPresent={roundStatus.IITGCandidateDecision}
                       displayFileName={"IIT Goa Offered Candidate Decision File"}
                       roundNumber={roundNumber}
                     />
-                    <RoundUpdateFiles
+                    <RoundUpdateFiles setR = {setR} setSRI = {setSRI}
                       fileName={"IITGOfferedButNotInterested"}
                       displayFileName={"IIT Goa Offered But Accepted At Different Institute File"}
                       isPresent={roundStatus.IITGOfferedButNotInterested}
                       roundNumber={roundNumber}
                     />
-                    <RoundUpdateFiles
+                    <RoundUpdateFiles setR = {setR} setSRI = {setSRI}
                       displayFileName={"Consolidated Decision File"}
                       fileName={"ConsolidatedFile"}
                       isPresent={roundStatus.ConsolidatedFile}

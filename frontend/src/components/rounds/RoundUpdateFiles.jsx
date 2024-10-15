@@ -1,20 +1,25 @@
 import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  Box,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DownloadIcon from "@mui/icons-material/Download";
-import axios from "axios";
-import MenuItem from "@mui/material/MenuItem";
 import GetAppIcon from "@mui/icons-material/GetApp";
-import { TextField, Button, Snackbar, Alert, CircularProgress } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import fileDownload from "js-file-download";
+import axios from "axios";
 
 function RoundUpdateFiles(props) {
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  }
-
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
   const [fileExists, setFileExists] = useState(props.isPresent);
@@ -29,16 +34,21 @@ function RoundUpdateFiles(props) {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
 
   const handleFileSubmit = (e) => {
-    const file = e.target.files[0];
-    if (file.name.split(".").pop() !== "xlsx") {
-      setSnackbarMessage("Invalid file type, please upload an xlsx file");
+    const selectedFile = e.target.files[0];
+    if (selectedFile.name.split(".").pop() !== "xlsx") {
+      setSnackbarMessage("Invalid file type, please upload an .xlsx file");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-    setFile(e.target.files[0]);
+    setFile(selectedFile);
     setColumnNames(null);
   };
 
@@ -78,7 +88,15 @@ function RoundUpdateFiles(props) {
   };
 
   const uploadFile = () => {
+
     setIsLoading(true);
+    if (!coap || !candidateDecision || coap === "" || candidateDecision === "") {
+      setSnackbarMessage("Please ensure both COAP Reg Id and Candidate Decision are selected.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      setIsLoading(false);
+      return; // Exit the function if validation fails
+    }
     try {
       const jwtToken = getCookie("jwtToken");
       const formData = new FormData();
@@ -106,6 +124,26 @@ function RoundUpdateFiles(props) {
           setSnackbarOpen(true);
           setFileExists(true);
           setIsLoading(false);
+          axios
+            .get(`${process.env.REACT_APP_BACKEND_URL}/api/rounds/getRounds`, {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            })
+            .then((res) => {
+              const r = Array.from({ length: res.data.rounds }, (_, i) => `Round-${i + 1}`);
+
+              // console.log(r.length);
+              props.setR(r);
+              props.setSRI(r.length - 1);
+              // setIsLoading(false);
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         })
         .catch((err) => {
           setSnackbarMessage("File upload failed.");
@@ -113,170 +151,201 @@ function RoundUpdateFiles(props) {
           setSnackbarOpen(true);
           setIsLoading(false);
         });
+
+
+
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleDownload = () => {
-    axios
-      .get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/rounds/getFile/${props.fileName}/${props.roundNumber}`,
-        {
-          responseType: "blob",
-        },
-        {
-          headers: {
-            responseType: "blob",
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true,
-          },
-          withCredentials: true,
-        }
-      )
+    axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/api/rounds/getFile/${props.fileName}/${props.roundNumber}`,
+      { responseType: "blob" }
+    )
       .then((res) => {
         fileDownload(res.data, `${props.fileName}.xlsx`);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
   return (
-    <div className="flex flex-col max-w-[800px] min-w-[95%] rounded-xl border-2">
-      <div className="flex justify-center items-center w-full h-11 bg-zinc-100 rounded-t-xl ">
-        <p className="text-xl text-black">{props.displayFileName}</p>
-      </div>
-      <div className="flex justify-center h-[fit-content] rounded-b-xl items-center gap-2 p-2 box-border">
+    <Box
+      sx={{
+        // maxWidth: "800px",
+        width: "100%",
+        border: 2,
+        borderColor: "grey.300",
+        borderRadius: 2,
+        overflow: "hidden",
+        boxShadow: 3,
+        backgroundColor: "background.paper",
+      }}
+    >
+      <Box
+        sx={{
+          backgroundColor: "grey.100",
+          py: 1.5,
+          textAlign: "center",
+          borderBottom: 2,
+          borderColor: "grey.300",
+        }}
+      >
+        <Typography variant="h6" sx={{ fontFamily: 'Maven Pro, sans serif', padding: '10px' }}>{props.displayFileName}</Typography>
+      </Box>
+      <Box sx={{ p: 2 }}>
         {!fileExists && (
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<UploadFileIcon />}
-            className="w-[fit-content] p-[2px]"
-            onChange={handleFileSubmit}
-          >
-            <input type="file" hidden />
-            Choose File
-          </Button>
-        )}
-        {!fileExists && file === null && (
-          <p className="text-xl text-grey">No Files Uploaded</p>
-        )}
-        {!fileExists && file !== null && (
-          <div className="flex justify-center items-center gap-7">
-            <div className="flex justify-center items-center shadow p-2 w-[300px] min-w-[200px] box-border h-15 ">
-              <p className="text-lg text-black truncate w-[fit-content]">
-                <b className="text-zinc-500">File Name: </b> {file.name}
-              </p>
-            </div>
-            <div className="flex justify-center items-center shadow p-2 w-[300px] box-border min-w-[200px] h-15">
-              <div className="text-lg text-black truncate w-[fit-content]">
-                <b className="text-zinc-500">Type: </b>
-                {file.type}
-              </div>
-            </div>
-          </div>
+          <Grid container direction="column" spacing={2} alignItems="center">
+            <Grid item>
+              <Button
+                variant="contained"
+                component="label"
+                startIcon={<UploadFileIcon />}
+              >
+                Choose File
+                <input
+                  type="file"
+                  accept=".xlsx"
+                  hidden
+                  onChange={handleFileSubmit}
+                />
+              </Button>
+            </Grid>
+            <Grid item>
+              {file === null ? (
+                <Typography color="textSecondary" sx={{ fontFamily: 'Monda, sans serif', color: 'red' }}>No Files Uploaded</Typography>
+              ) : (
+                <Grid container justifyContent="center" spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2">
+                      <b>File Name:</b> {file.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2">
+                      <b>Type:</b> {file.type}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+              )}
+            </Grid>
+          </Grid>
         )}
         {fileExists && (
-          <div className="flex w-full justify-center items-center">
-            <p className="text-xl w-[80%]">File Has Been Uploaded</p>
+          <Box textAlign="center" my={2}>
+            <Typography variant="body1" color="primary" sx={{ fontFamily: 'Monda, sans serif', color: '#347928', marginBottom: '10px' }}>
+              File Has Been Uploaded
+            </Typography>
             <Button
               variant="contained"
               startIcon={<DownloadIcon />}
-              style={{ margin: "auto", marginBottom: "5px" }}
               onClick={handleDownload}
+              color="success"
             >
               Download
             </Button>
-          </div>
+          </Box>
         )}
-      </div>
-      {isLoading && <CircularProgress />}
-      {columnNames != null && !isLoading && (
-        <div className="flex justify-center flex-col items-center w-full">
-          <div className="w-full flex justify-center items-center">
-            <p className="text-xl text-gray-400">Please Match The Columns</p>
-          </div>
-          <div className="w-full flex justify-center items-center p-4 box-border gap-10">
-            <div className="w-[300px] flex flex-col justify-center rounded-md p-2 shadow-md gap-3">
-              <p className="text-md text-gray-400">COAP Reg Id</p>
-              <TextField
-                select
-                value={coap}
-                label="COAP Reg Id"
-                onChange={(e) => {
-                  setCoap(e.target.value);
-                }}
-                className="w-[100%]"
-              >
-                {columnNames != null &&
-                  columnNames.map((label) => (
+        {isLoading && (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+            <CircularProgress />
+          </Box>
+        )}
+        {columnNames && !isLoading && !fileExists && (
+          <Box sx={{ my: 2 }}>
+            <Typography variant="body2" color="red" align="center" sx={{ fontFamily: 'Monda, sans serif', fontSize: 18 }}>
+              Please match the columns
+            </Typography>
+            <Grid container spacing={3} justifyContent="center" mt={2}>
+              <Grid item xs={12} sm={6} container justifyContent="center">
+                <TextField
+                  select
+                  label="COAP Reg Id"
+                  value={coap}
+                  onChange={(e) => setCoap(e.target.value)}
+                  fullWidth
+                  sx={{ maxWidth: '350px' }}  // Maintain maxWidth for the select field
+                >
+                  {columnNames.map((label) => (
                     <MenuItem key={label} value={label}>
                       {label}
                     </MenuItem>
                   ))}
-                <MenuItem key={-1} value={""}>
-                  {""}
-                </MenuItem>
-              </TextField>
-            </div>
-            <div className="w-[300px] flex flex-col justify-center rounded-md p-2 shadow-md gap-3">
-              <p className="text-md text-gray-400">
-                {props.fileName === "IITGOfferedButNotInterested"
-                  ? "Other Institute Decision"
-                  : "Applicant Decision"}
-              </p>
-              <TextField
-                select
-                value={candidateDecision}
-                label={
-                  props.fileName === "IITGOfferedButNotInterested"
-                    ? "Other Institute Decision"
-                    : "Applicant Decision"
-                }
-                onChange={(e) => {
-                  setCandidateDecision(e.target.value);
-                }}
-                className="w-[100%]"
-              >
-                {columnNames != null &&
-                  columnNames.map((label) => (
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6} container justifyContent="center">
+                <TextField
+                  select
+                  label={
+                    props.fileName === "IITGOfferedButNotInterested"
+                      ? "Other Institute Decision"
+                      : "Applicant Decision"
+                  }
+                  value={candidateDecision}
+                  onChange={(e) => setCandidateDecision(e.target.value)}
+                  fullWidth
+                  sx={{ maxWidth: '350px' }}  // Maintain maxWidth for the select field
+                >
+                  {columnNames.map((label) => (
                     <MenuItem key={label} value={label}>
                       {label}
                     </MenuItem>
                   ))}
-                <MenuItem key={-1} value={""}>
-                  {""}
-                </MenuItem>
-              </TextField>
-            </div>
-          </div>
-          <div className="flex w-full justify-center items-center">
+                </TextField>
+              </Grid>
+            </Grid>
+            <Box textAlign="center" mt={3}>
+              <Button
+                variant="contained"
+                startIcon={<FileUploadIcon />}
+                onClick={uploadFile}
+                sx={{
+                  maxWidth: '200px',
+                  backgroundColor: "#36AA95", // Success green color
+                  color: "white",
+                  fontWeight: "bold",
+                  '&:hover': {
+                    backgroundColor: "#379777", // Slightly darker green for hover
+                  },
+                  '&:active': {
+                    backgroundColor: "#388E3C", // Even darker green for active state
+                  }
+                }}
+              >
+                Upload
+              </Button>
+            </Box>
+          </Box>
+
+        )}
+        {file && !columnNames && !fileExists && (
+          <Box textAlign="center" mt={2}>
             <Button
               variant="contained"
-              startIcon={<FileUploadIcon />}
-              style={{ margin: "auto", marginBottom: "5px" }}
-              onClick={uploadFile}
+              startIcon={<GetAppIcon />}
+              onClick={getColumnNames}
+              sx={{
+                maxWidth: '300px',
+                backgroundColor: "#36AA95", // Success green color
+                color: "white",
+                fontWeight: "bold",
+                '&:hover': {
+                  backgroundColor: "#379777", // Slightly darker green for hover
+                },
+                '&:active': {
+                  backgroundColor: "#388E3C", // Even darker green for active state
+                }
+              }}
             >
-              Upload
+              Get Column Names
             </Button>
-          </div>
-        </div>
-      )}
-      {columnNames === null && !fileExists && (
-        <div className="flex w-full justify-center items-center">
-          <Button
-            variant="contained"
-            startIcon={<GetAppIcon />}
-            style={{ margin: "auto", marginBottom: "5px" }}
-            onClick={getColumnNames}
-          >
-            Get Column Names
-          </Button>
-        </div>
-      )}
+          </Box>
+        )}
+      </Box>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -286,11 +355,21 @@ function RoundUpdateFiles(props) {
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
           sx={{ width: "100%" }}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleSnackbarClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
         >
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 }
 

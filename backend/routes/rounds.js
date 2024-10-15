@@ -106,6 +106,7 @@ router.get("/getRounds", isAuthenticated, async (req, res) => {
       1
     );
   }
+  // console.log(OffersfilesList.length);
   if (
     OffersfilesList.length === 0 ||
     updatesFromRoundsFiles.length === 3 * OffersfilesList.length
@@ -206,10 +207,7 @@ router.get("/generateOffers/:roundId", isAuthenticated, async (req, res) => {
     let roundId = req.params.roundId;
     let branchDirectory = path.join(__dirname, "..", "files", req.user.branch);
     let modifiedFilePath = path.join(branchDirectory, "modifiedFile.xlsx");
-    let generatedOffersDirectoryPath = path.join(
-      branchDirectory,
-      "generatedOffers"
-    );
+    let generatedOffersDirectoryPath = path.join(branchDirectory, "generatedOffers");
     // console.log(`Generating... round ${roundId} results`);
 
     // Check if the modifiedFile.xlsx exists
@@ -231,7 +229,7 @@ router.get("/generateOffers/:roundId", isAuthenticated, async (req, res) => {
       ``,
       async (error) => {
         if (error) {
-          console.log(error);
+          // console.log(error);
           throw error; // Throw an error if file creation fails
         }
 

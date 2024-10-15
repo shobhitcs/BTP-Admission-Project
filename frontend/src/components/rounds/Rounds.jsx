@@ -67,7 +67,7 @@ function Rounds() {
         }
       )
       .then(() => {
-        window.location.reload();
+        // window.location.reload();
         setIsLoading(false);
       })
       .catch(() => {
@@ -119,7 +119,7 @@ function Rounds() {
             </Button>
           </Box>
           <Box sx={{ mt: 4 }}>
-            <RoundDetails roundNumber={selectedRoundIndex + 1} />
+            <RoundDetails setR = {setRounds} setSRI = {setSelectedRoundIndex} roundNumber={selectedRoundIndex + 1} />
           </Box>
         </Box>
       )}

@@ -36,7 +36,7 @@ connection.connect((err) => {
       console.error("Error querying the seatMatrix table:", err);
       return;
     }
-    console.log("Fetched rows from seatMatrix:", rows);
+    // console.log("Fetched rows from seatMatrix:", rows);
   });
 
   // Test fetching all rows from the applicationstatus table

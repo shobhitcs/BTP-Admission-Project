@@ -4,7 +4,6 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 import SelectBox from "./SelectBox";
-import documentImage from "../../images/docmentimage.jpg";
 import fileDownload from "js-file-download";
 import { applicantsSchemaColumnNames } from "./columnNames";
 import TaskIcon from '@mui/icons-material/Task';

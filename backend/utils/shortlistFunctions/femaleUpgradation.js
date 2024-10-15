@@ -1,5 +1,5 @@
-const { insertManyIntoTable } = require("../sqlqueries");
-var query = require("../sqlqueries").selectQuery;
+// const { insertManyIntoTable } = require("../sqlqueries");
+// var query = require("../sqlqueries").selectQuery;
 
 /*
     Name: updateFemaleCandidatesOfferedCategory
@@ -16,6 +16,7 @@ async function updateFemaleCandidatesOfferedCategory(
   branch
 ) {
   // Query string
+  console.log(category)
   const queryString = `SELECT mtechappl.COAP, Gender, Category, MaxGateScore,
     Offered, 
     Accepted,
@@ -32,6 +33,7 @@ async function updateFemaleCandidatesOfferedCategory(
   // Querying
   try {
     [shortlistedCandidates] = await con.query(queryString);
+    console.log(`shortlist for ${category}`,shortlistedCandidates);
   } catch (error) {
     throw error;
   }
