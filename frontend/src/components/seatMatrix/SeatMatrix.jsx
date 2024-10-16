@@ -29,6 +29,7 @@ function SeatMatrix() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
+  const [expandedCategory, setExpandedCategory] = useState(null); // State for tracking the expanded category
 
   // Snackbar states
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -57,11 +58,13 @@ function SeatMatrix() {
         )
         .then((res) => {
           setData(res.data.result);
-          setRows(res.data.result.map(({ category, seatsAllocated, seatsBooked }) => ({
-            category,
-            seats: seatsAllocated,
-            seatsBooked,
-          })));
+          setRows(
+            res.data.result.map(({ category, seatsAllocated, seatsBooked }) => ({
+              category,
+              seats: seatsAllocated,
+              seatsBooked,
+            }))
+          );
           setIsLoading(false);
         })
         .catch((err) => {
@@ -81,11 +84,16 @@ function SeatMatrix() {
   }, [navigate]);
 
   const handleSeatsChange = (category, newSeats) => {
-    setRows(prevRows =>
-      prevRows.map(row =>
+    setRows((prevRows) =>
+      prevRows.map((row) =>
         row.category === category ? { ...row, seats: newSeats } : row
       )
     );
+  };
+
+  // Toggle category for expanding or collapsing
+  const toggleCategory = (category) => {
+    setExpandedCategory(expandedCategory === category ? null : category);
   };
 
   const handleSaveAll = async () => {
@@ -114,43 +122,119 @@ function SeatMatrix() {
     }
   };
 
+  // List of main categories
+  const mainCategories = ["COMMON_PWD", "EWS", "GEN", "OBC", "SC", "ST"];
+
+  const getSubcategories = (mainCategory) => {
+    return rows.filter((row) => row.category.startsWith(mainCategory));
+  };
+
+  // Function to generate the summary string for each main category
+  const generateCategorySummary = (mainCategory) => {
+    const subcategories = getSubcategories(mainCategory);
+    return subcategories
+      .map((subcategory) => `${subcategory.category}(${subcategory.seats})`)
+      .join(", ");
+  };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, mt: 4, mb: 4, padding: '80px 10px 10px 10px' }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 3,
+        mt: 4,
+        mb: 4,
+        padding: "80px 10px 10px 10px",
+      }}
+    >
       {!isLoading && (
         <>
           <TableContainer component={Paper} sx={{ maxWidth: "1400px" }}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
-                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                  <TableCell
+                    sx={{
+                      fontSize: 18,
+                      color: "white",
+                      fontFamily: "Maven Pro, sans-serif",
+                    }}
+                    align="center"
+                  >
                     Category
                   </TableCell>
-                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                  <TableCell
+                    sx={{
+                      fontSize: 18,
+                      color: "white",
+                      fontFamily: "Maven Pro, sans-serif",
+                    }}
+                    align="center"
+                  >
+                    Set Seats
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 18,
+                      color: "white",
+                      fontFamily: "Maven Pro, sans-serif",
+                    }}
+                    align="center"
+                  >
                     Seats Allocated
                   </TableCell>
-                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
+                  <TableCell
+                    sx={{
+                      fontSize: 18,
+                      color: "white",
+                      fontFamily: "Maven Pro, sans-serif",
+                    }}
+                    align="center"
+                  >
                     Seats Booked
-                  </TableCell>
-                  <TableCell sx={{ fontSize: 18, color: "white", fontFamily: 'Maven Pro, sans-serif' }} align="center">
-                    Set Seats
                   </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
-                {rows.map(row => (
-                  <SeatMatrixRow
-                    key={row.category}
-                    category={row.category}
-                    seatsAllocated={row.seats}
-                    seatsBooked={row.seatsBooked}
-                    onSeatsChange={handleSeatsChange}
-                  />
+                {mainCategories.map((mainCategory) => (
+                  <React.Fragment key={mainCategory}>
+                    {/* Main Category Row */}
+                    <TableRow
+                      onClick={() => toggleCategory(mainCategory)}
+                      sx={{ backgroundColor: "#e0e0e0", cursor: "pointer" }}
+                    >
+                      <TableCell colSpan={4} align="center">
+                        <strong style={{ fontSize: 23, fontFamily: "Maven Pro, sans-serif" }}>
+                          {mainCategory}{" "}
+                          {/* Always show summary for collapsed categories */}
+                          {expandedCategory !== mainCategory && (
+                            <span style={{ fontSize: 18, color: "#555" }}>
+                              : {generateCategorySummary(mainCategory)}
+                            </span>
+                          )}
+                        </strong>
+                      </TableCell>
+                    </TableRow>
+                    {/* Subcategory Rows */}
+                    {expandedCategory === mainCategory &&
+                      getSubcategories(mainCategory).map((row) => (
+                        <SeatMatrixRow
+                          key={row.category}
+                          category={row.category}
+                          seatsAllocated={row.seats}
+                          seatsBooked={row.seatsBooked}
+                          onSeatsChange={handleSeatsChange}
+                        />
+                      ))}
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-          {/*  Update all at a once feature added. */}
+          {/*  Update all at once feature */}
           <Button
             variant="contained"
             onClick={handleSaveAll}
@@ -165,8 +249,16 @@ function SeatMatrix() {
           <CircularProgress />
         </Box>
       )}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
@@ -175,6 +267,8 @@ function SeatMatrix() {
 }
 
 export default SeatMatrix;
+
+
 
 
 
