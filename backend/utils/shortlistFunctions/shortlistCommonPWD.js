@@ -62,7 +62,7 @@ async function shortlistCommonPWDCandidates(con, limit, round, branch) {
     //querying
     try {
       var [shortlistedCandidates] = await con.query(queryString);
-      console.log(shortlistedCandidates,123)
+      // console.log(shortlistedCandidates,123)
       shortlistedCandidates = shortlistedCandidates[0];
       if (!shortlistedCandidates) {
         break;

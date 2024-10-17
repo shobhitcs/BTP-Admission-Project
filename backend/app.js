@@ -18,11 +18,11 @@ const adminCheckRoutes = require("./routes/adminCheckRoutes");
 const authenticationRouter = require("./routes/authenticationRouter");
 const addBranchRoute = require("./routes/addBranchRoute");
 const deleteBranchRoute = require("./routes/deleteBranchRoute");
-const connection = require("./config/dbConfig");
+// const connection = require("./config/dbConfig");
 
 
 require("dotenv").config();
-app.use(morgan('dev'))
+// app.use(morgan('dev'))
 // app.use(cors());
 
 // app.use(

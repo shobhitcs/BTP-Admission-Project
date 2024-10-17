@@ -13,7 +13,7 @@ async function findAvailableSeats(con, category, round, branch) {
       [round, category + "_PWD", branch, category + "_PWD", branch]
     );
 
-    console.log(availableSeats, availablePWDSeats);
+    // console.log(availableSeats, availablePWDSeats);
   } catch (error) {
     throw error;
   }
@@ -25,14 +25,14 @@ async function findAvailableSeats(con, category, round, branch) {
       0,
       availableSeats[0].SeatsAllocated - availableSeats[0].SeatsTaken
     );
-  console.log(
-    "Seats available for",
-    category,
-    "in branch",
-    branch,
-    "is:",
-    seatsAvailable
-  );
+  // console.log(
+  //   "Seats available for",
+  //   category,
+  //   "in branch",
+  //   branch,
+  //   "is:",
+  //   seatsAvailable
+  // );
 
   return seatsAvailable;
 }
@@ -49,14 +49,14 @@ async function findAvailableSeatsPWD(con, category, round, branch) {
     throw error;
   }
 
-  console.log(
-    "Seats available for",
-    category,
-    "in branch",
-    branch,
-    "is:",
-    Math.max(0, availableSeats[0].SeatsAllocated - availableSeats[0].SeatsTaken),234
-  );
+  // console.log(
+  //   "Seats available for",
+  //   category,
+  //   "in branch",
+  //   branch,
+  //   "is:",
+  //   Math.max(0, availableSeats[0].SeatsAllocated - availableSeats[0].SeatsTaken),234
+  // );
 
   return Math.max(
     0,
@@ -76,12 +76,12 @@ async function findAvailableSeatsCommonPWD(con, round, branch) {
     throw error;
   }
 
-  console.log(
-    "Seats available for common_PWD in branch",
-    branch,
-    "is:",
-    Math.max(0, availableSeats[0].SeatsAllocated - availableSeats[0].SeatsTaken), availableSeats
-  );
+  // console.log(
+  //   "Seats available for common_PWD in branch",
+  //   branch,
+  //   "is:",
+  //   Math.max(0, availableSeats[0].SeatsAllocated - availableSeats[0].SeatsTaken), availableSeats
+  // );
 
   return Math.max(
     0,

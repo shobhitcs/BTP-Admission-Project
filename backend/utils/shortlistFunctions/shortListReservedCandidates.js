@@ -66,7 +66,7 @@ async function shortListReservedCandidates(
         currCategory,
         branch, // Include branch directly in the values
       ]);
-      console.log(`Shortlisted ${candidate.COAP} in ${currCategory} category`);
+      // console.log(`Shortlisted ${candidate.COAP} in ${currCategory} category`);
     }
 
     if (valuesToBeInserted.length > 0) {

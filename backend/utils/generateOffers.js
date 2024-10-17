@@ -153,7 +153,7 @@ async function generateOffers(databaseName, round, filePath, branch) {
       round,
       branch
     );
-    console.log("generated offers 14: ", branch);
+    // console.log("generated offers 14: ", branch);
 
     var generalCandidates = await shortListGeneralCandidates(
       con,
@@ -161,7 +161,7 @@ async function generateOffers(databaseName, round, filePath, branch) {
       round,
       branch
     );
-    console.log("generated offers 15: ", branch);
+    // console.log("generated offers 15: ", branch);
 
     var EWSCandidatesFemales = await shortListEWSFemaleCandidates(
       con,
@@ -169,7 +169,7 @@ async function generateOffers(databaseName, round, filePath, branch) {
       round,
       branch
     );
-    console.log("generated offers 16: ", branch);
+    // console.log("generated offers 16: ", branch);
 
     var EWSCandidates = await shortListEWSCandidates(
       con,
@@ -177,7 +177,7 @@ async function generateOffers(databaseName, round, filePath, branch) {
       round,
       branch
     );
-    console.log("generated offers 17: ", branch);
+    // console.log("generated offers 17: ", branch);
 
     var OBCCandidatesFemales = await shortListReservedCandidates(
       con,

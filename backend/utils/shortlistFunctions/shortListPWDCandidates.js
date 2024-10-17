@@ -32,7 +32,7 @@ async function shortListPWDCandidates(
 
   try {
     var [shortlistedCandidates] = await con.query(queryString);
-    console.log(shortlistedCandidates,'pwd');
+    // console.log(shortlistedCandidates,'pwd');
   } catch (error) {
     throw error;
   }
@@ -51,7 +51,7 @@ async function shortListPWDCandidates(
         "Y",
         branch,
       ]);
-      console.log(`Shortlisted ${candidate.COAP} in ${offerCat} category `);
+      // console.log(`Shortlisted ${candidate.COAP} in ${offerCat} category `);
     }
 
     if (valuesToBeInserted.length > 0) {
