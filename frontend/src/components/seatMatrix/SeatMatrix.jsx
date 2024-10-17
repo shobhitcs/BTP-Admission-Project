@@ -133,8 +133,12 @@ function SeatMatrix() {
   const generateCategorySummary = (mainCategory) => {
     const subcategories = getSubcategories(mainCategory);
     return subcategories
-      .map((subcategory) => `${subcategory.category}(${subcategory.seats})`)
-      .join(", ");
+      .filter((subcategory) => subcategory.seats > 0) // Only include non-zero seat allocations
+      .map(
+        (subcategory) =>
+          `${subcategory.category} (${subcategory.seats})`
+      )
+      .join("  "); // Add extra space between subcategories
   };
 
   return (
@@ -211,7 +215,14 @@ function SeatMatrix() {
                           {mainCategory}{" "}
                           {/* Always show summary for collapsed categories */}
                           {expandedCategory !== mainCategory && (
-                            <span style={{ fontSize: 18, color: "#555" }}>
+                            <span
+                              style={{
+                                fontSize: 18,
+                                color: "#555",
+                                marginLeft: "10px",
+                                letterSpacing: "0.5px", // Add letter spacing for better appearance
+                              }}
+                            >
                               : {generateCategorySummary(mainCategory)}
                             </span>
                           )}
@@ -267,7 +278,6 @@ function SeatMatrix() {
 }
 
 export default SeatMatrix;
-
 
 
 
