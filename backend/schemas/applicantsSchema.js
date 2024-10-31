@@ -58,19 +58,23 @@ var applicantsSchema = `(
   currYearScore float(24),
   prevYearScore float(24),
   prevprevYearScore float(24),
+  currYearRollNo text,
+  prevYearRollNo text, 
+  prevprevYearRollNo text, 
   HSSCper float(24), 
   SSCper float(24),
   DegreeCGPA8thSem float(24), 
   branch VARCHAR(50),
   GateRegNum text,
-  Adm text
+  Adm text,
+  OtherDetails text
   )
   `;
-  // applicantsSchemaColumnNames = [
-    //   "COAP",
-    //   "AppNo",
-    //   "Email",
-    //   "FullName",
+// applicantsSchemaColumnNames = [
+//   "COAP",
+//   "AppNo",
+//   "Email",
+//   "FullName",
 //   "MaxGateScore",
 //   "Adm",
 //   "Pwd",
@@ -120,12 +124,15 @@ applicantsSchemaColumnNames = [
   "currYearScore",
   "prevYearScore",
   "prevprevYearScore",
+  "currYearRollNo",
+  "prevYearRollNo",
+  "prevprevYearRollNo",
   "HSSCper",
   "SSCper",
   "DegreeCGPA8thSem",
   "branch",
   "GateRegNum",
-  "Adm",
+  "Adm"
 ];
 module.exports = { applicantsSchema, applicantsSchemaColumnNames };
 

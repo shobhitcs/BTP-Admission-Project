@@ -174,8 +174,9 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
   /*
     Creating the values array which will be used to query(insert in) the database
   */
-  console.log("data", applicantsData[0]);
-  console.log("data", applicantsData[1]);
+  applicantsSchemaColumnNames.push("OtherDetails");
+  // console.log("data", applicantsData[0]);
+  // console.log("data", applicantsData[1]);
   var valuesToBeInserted = [];
   for (var applicant of applicantsData) {
     var applicantAttributes = [];
@@ -189,7 +190,7 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
           var currYearScore = -1;
           var prevYearScore = -1;
           var prevPrevYearScore = -1;
-          if (applicant["currYearScore"] != null && applicant["currYearScore"] != '') 
+          if (applicant["currYearScore"] != null && applicant["currYearScore"] != '')
             currYearScore = applicant["currYearScore"];
           if (applicant["prevYearScore"] != null && applicant["prevYearScore"] != '')
             prevYearScore = applicant["prevYearScore"];
@@ -203,6 +204,16 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
         }
       } else if (columnName === "GateRegNum") {
         var gateRegNum = "";
+        var currYearScore = -1;
+        var prevYearScore = -1;
+        var prevPrevYearScore = -1;
+        if (applicant["currYearScore"] != null && applicant["currYearScore"] != '')
+          currYearScore = applicant["currYearScore"];
+        if (applicant["prevYearScore"] != null && applicant["prevYearScore"] != '')
+          prevYearScore = applicant["prevYearScore"];
+        if (applicant["prevprevYearScore"] != null && applicant["prevprevYearScore"] != '')
+          prevPrevYearScore = applicant["prevprevYearScore"];
+        // console.log(currYearScore, prevYearScore, prevPrevYearScore, "scores");
         if (
           currYearScore > prevYearScore &&
           currYearScore > prevPrevYearScore
@@ -231,8 +242,8 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
           applicant["DegreeCGPA8thSem"] = null;
         }
         applicantAttributes.push(applicant[columnName]);
-        // } else if (columnName === "currYearRollNo") {
-        //   applicantAttributes.push(applicant["currYearRollNo"]);
+      } else if (columnName === "currYearRollNo") {
+        applicantAttributes.push(applicant["currYearRollNo"]);
         // } else if (columnName === "currYearRank") {
         //   applicantAttributes.push(applicant["currYearRank"]);
       } else if (columnName === "currYearScore") {
@@ -240,8 +251,8 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
         applicantAttributes.push(applicant["currYearScore"]);
         // } else if (columnName === "currYearDisc") {
         //   applicantAttributes.push(applicant["GATE" + currYear + "Disc"]);
-        // } else if (columnName === "prevYearRollNo") {
-        //   applicantAttributes.push(applicant["prevYearRollNo"]);
+      } else if (columnName === "prevYearRollNo") {
+        applicantAttributes.push(applicant["prevYearRollNo"]);
         // } else if (columnName === "prevYearRank") {
         //   applicantAttributes.push(applicant["prevYearRank"]);
       } else if (columnName === "prevYearScore") {
@@ -249,8 +260,8 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
         applicantAttributes.push(applicant["prevYearScore"]);
         // } else if (columnName === "prevYearDisc") {
         //   applicantAttributes.push(applicant["GATE" + prevYear + "Disc"]);
-        // } else if (columnName === "prevprevYearRollNo") {
-        //   applicantAttributes.push(applicant["prevprevYearRollNo"]);
+      } else if (columnName === "prevprevYearRollNo") {
+        applicantAttributes.push(applicant["prevprevYearRollNo"]);
         // } else if (columnName === "prevprevYearRank") {
         //   applicantAttributes.push(applicant["prevprevYearRank"]);
       } else if (columnName === "prevprevYearScore") {
@@ -282,6 +293,8 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
         applicantAttributes.push(applicant["SSCper"]);
       } else if (columnName === "Adm") {
         applicantAttributes.push(applicant["Adm"]);
+      } else if (columnName === "OtherDetails") {
+        applicantAttributes.push(applicant["OtherDetails"]);
       }
 
       // else {
@@ -295,7 +308,7 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
     }
     valuesToBeInserted.push(applicantAttributes);
   }
-  console.log("datafienla", valuesToBeInserted[0]);
+  // console.log("datafienla", valuesToBeInserted[0]);
 
   /*
     creating a string of comma seperated column names

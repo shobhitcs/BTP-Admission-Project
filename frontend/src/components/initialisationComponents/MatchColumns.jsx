@@ -50,7 +50,7 @@ const MatchColumns = () => {
             },
             withCredentials: true,
           });
-          console.log(response.data.result, response.data.options);
+          // console.log(response.data.result, response.data.options);
           setColumnNamesMatched(response.data.result);
           setOptionsColumn(response.data.options);
         }
