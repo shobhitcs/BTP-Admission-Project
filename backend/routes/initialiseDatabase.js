@@ -90,6 +90,7 @@ router.post("/saveToDataBase", isAuthenticated, async (req, res) => {
   var filePath = `${branchFolder}/uploadedFile.xlsx`;
   // console.log("request body: ", req.body);
   var matchedColumns = req.body.result;
+  console.log("matched columns: ", matchedColumns);
   // console.log(req.body);
   //reading the uploaded file
 
@@ -108,9 +109,10 @@ router.post("/saveToDataBase", isAuthenticated, async (req, res) => {
       for (const uploadedColumn of Object.keys(matchedColumns)) {
         selectedColumn = matchedColumns[uploadedColumn];
         if (selectedColumn != "ignore" && applicant[uploadedColumn] != "") {
-          row[selectedColumn] = applicant[uploadedColumn];
+          row[uploadedColumn] = applicant[selectedColumn];
         }
       }
+      // console.log("row", row);
       data.push(row);
     }
     // console.log("the data is present in here: ", data);
@@ -178,8 +180,9 @@ router.post("/saveToDataBase", isAuthenticated, async (req, res) => {
 router.get("/getMatchedColumnNames", isAuthenticated, (req, res) => {
   try {
     var branchFolder = `${userFilePath}/${req.user.branch}`;
-    var result = mapColumnNames(`${branchFolder}/uploadedFile.xlsx`);
-    res.status(200).send({ result: result });
+    var ans = mapColumnNames(`${branchFolder}/uploadedFile.xlsx`);
+    console.log(ans);
+    res.status(200).send(ans);
   } catch (error) {
     if (error instanceof Error && error.code === "ENOENT") {
       // Handle the ENOENT error

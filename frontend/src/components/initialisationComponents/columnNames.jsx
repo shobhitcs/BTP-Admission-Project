@@ -6,7 +6,6 @@ const prevprevYear = currYear - 2;
 export const applicantsSchemaColumnNames = [
   "COAP",
   "AppNo",
-
   "Email",
   "FullName",
   "MaxGateScore",

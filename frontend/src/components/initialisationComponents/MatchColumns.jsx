@@ -16,6 +16,7 @@ function getCookie(name) {
 
 const MatchColumns = () => {
   const [columnNamesMatched, setColumnNamesMatched] = useState(null);
+  const [optionsColumn, setOptionsColumn] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileExists, setFileExists] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -49,7 +50,9 @@ const MatchColumns = () => {
             },
             withCredentials: true,
           });
+          console.log(response.data.result, response.data.options);
           setColumnNamesMatched(response.data.result);
+          setOptionsColumn(response.data.options);
         }
         setIsLoading(false);
       } catch (error) {
@@ -69,22 +72,23 @@ const MatchColumns = () => {
   };
 
   const sendSelectedColumnNames = () => {
-    for (const actualColumnName of applicantsSchemaColumnNames) {
-      let count = 0;
-      for (const uploadedColumnName of Object.keys(columnNamesMatched)) {
-        if (columnNamesMatched[uploadedColumnName] === actualColumnName) {
-          count++;
-        }
-      }
-      if (count >= 2) {
-        handleError(`${actualColumnName} is Selected Twice`);
-        return;
-      }
-      if (count === 0) {
-        handleError(`${actualColumnName} is Not Selected`);
-        return;
-      }
-    }
+    //Code not required after schema change
+    // for (const actualColumnName of applicantsSchemaColumnNames) {
+    //   let count = 0;
+    //   for (const uploadedColumnName of Object.keys(columnNamesMatched)) {
+    //     if (columnNamesMatched[uploadedColumnName] === actualColumnName) {
+    //       count++;
+    //     }
+    //   }
+    //   if (count >= 2) {
+    //     handleError(`${actualColumnName} is Selected Twice`);
+    //     return;
+    //   }
+    //   if (count === 0) {
+    //     handleError(`${actualColumnName} is Not Selected`);
+    //     return;
+    //   }
+    // }
     setIsLoading(true);
     axios
       .post(`${process.env.REACT_APP_BACKEND_URL}/api/initialise/saveToDataBase`, { result: columnNamesMatched }, {
@@ -173,6 +177,7 @@ const MatchColumns = () => {
                     uploadedColumnName={columnName}
                     predictedColumnName={columnNamesMatched[columnName]}
                     changeState={changeColumnNamesMatchedState}
+                    options = {optionsColumn}
                     sx={{ fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
                   />
                 </Box>

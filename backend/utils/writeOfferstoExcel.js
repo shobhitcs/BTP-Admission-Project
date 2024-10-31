@@ -85,9 +85,12 @@ async function writeToExcel2024(con, sheetName, round, fileName, branch) {
 
       // row["App Date"] = date;
       // row["App Date"] = format(new Date(date), "dd/MMM/yyyy");
+      // row["GATE Reg No (without papercode)"] = row[
+      //   "GATE Reg No (without papercode)"
+      // ].slice(2, 14);
       row["GATE Reg No (without papercode)"] = row[
         "GATE Reg No (without papercode)"
-      ].slice(2, 14);
+      ];
       row["Mtech Application Number"] = row["Mtech Application Number"];
       row["GATE Score"] = row["GATE Score"];
       row["Candidate Name"] = row["Candidate Name"];

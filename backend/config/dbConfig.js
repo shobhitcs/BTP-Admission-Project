@@ -31,13 +31,13 @@ connection.connect((err) => {
   // });
 
   // Test fetching all rows from the seatMatrix table
-  connection.query("SELECT * FROM seatMatrix", (err, rows) => {
-    if (err) {
-      console.error("Error querying the seatMatrix table:", err);
-      return;
-    }
-    // console.log("Fetched rows from seatMatrix:", rows);
-  });
+  // connection.query("SELECT * FROM seatMatrix", (err, rows) => {
+  //   if (err) {
+  //     console.error("Error querying the seatMatrix table:", err);
+  //     return;
+  //   }
+  //   // console.log("Fetched rows from seatMatrix:", rows);
+  // });
 
   // Test fetching all rows from the applicationstatus table
   // connection.query("SELECT * FROM applicationstatus", (err, rows) => {
