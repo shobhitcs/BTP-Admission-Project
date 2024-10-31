@@ -82,3 +82,26 @@ export const applicantsSchemaColumnNamesJson = {
   DegreePer7thSem: [],
   DegreePer8thSem: []
 };
+
+export const columnMapping = {
+  "COAP": "COAP",
+  "AppNo": "AppNo",
+  "Email": "Email",
+  "FullName": "FullName",
+  "MaxGateScore": "MaxGateScore",
+  "Pwd": "Pwd",
+  "Ews": "Ews",
+  "Gender": "Gender",
+  "Category": "Category",
+  "currYearScore": "GATE" + currYear + "Score",
+  "prevYearScore": "GATE" + prevYear + "Score",
+  "prevprevYearScore": "GATE" + prevprevYear + "Score",
+  "currYearRollNo": "GATE" + currYear + "RollNo",
+  "prevYearRollNo": "GATE" + prevYear + "RollNo",
+  "prevprevYearRollNo": "GATE" + prevprevYear + "RollNo",
+  "HSSCper": "HSSCper",
+  "SSCper": "SSCper",
+  "DegreeCGPA8thSem": "DegreeCGPA8thSem",
+  "DegreePer8thSem": "DegreePer8thSem",
+  "Adm": "Adm"
+};

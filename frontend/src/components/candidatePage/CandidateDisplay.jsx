@@ -97,22 +97,22 @@ function CandidateDisplay() {
         <Box sx={{ maxWidth: "1000px", margin: "auto" }}>
           <Card sx={{ mb: 4, backgroundColor: "#1B3058", color: "white" }}>
             <CardContent>
-              <Typography variant="h5" align="center" sx={{ fontFamily: 'Maven pro, sans serif'}}>
+              <Typography variant="h5" align="center" sx={{ fontFamily: 'Maven pro, sans serif' }}>
                 Candidate Details
               </Typography>
             </CardContent>
           </Card>
           {data && (
             <>
-              <Grid container spacing={2} justifyContent="center">
+              <Grid container spacing={2} justifyContent="center" >
                 {["FullName", "ApplicationNumber", "COAP"].map((key) => (
                   <Grid item xs={12} sm={6} md={4} key={key}>
                     <Card variant="outlined">
                       <CardContent>
-                        <Typography variant="h6" color="text.secondary">
+                        <Typography color="text.secondary" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
                           {key}
                         </Typography>
-                        <Typography variant="body1">
+                        <Typography sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
                           {data[0][key] || "NULL"}
                         </Typography>
                       </CardContent>
@@ -127,10 +127,10 @@ function CandidateDisplay() {
                     <Grid item xs={12} sm={6} md={4} key={key}>
                       <Card variant="outlined">
                         <CardContent>
-                          <Typography variant="subtitle1" color="text.secondary">
+                          <Typography color="text.secondary" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
                             {key}
                           </Typography>
-                          <Typography variant="body2">
+                          <Typography sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
                             {data[0][key] || "NULL"}
                           </Typography>
                         </CardContent>
@@ -139,20 +139,21 @@ function CandidateDisplay() {
                   ))}
               </Grid>
               {data[0]["Accepted"] === "Y" || data[0]["Accepted"] === "R" ? (
-                <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-                  <Typography variant="h6" sx={{ mr: 2 }}>
+                <Box sx={{ mt: 4, display: "flex", justifyContent: "center", alignItems: 'center' }}>
+                  <Typography sx={{ mr: 2, fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>
                     Update Status:
                   </Typography>
                   <Select
                     value={status}
                     onChange={handleChange}
-                    sx={{ mr: 2, minWidth: 200 }}
+                    sx={{ mr: 2, minWidth: 200, fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}
                   >
-                    <MenuItem value={"N"}>Reject</MenuItem>
+                    <MenuItem value={"N"} sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}>Reject</MenuItem>
                   </Select>
                   <Button
                     variant="contained"
                     color="primary"
+                    sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600' }}
                     onClick={handleUpdate}
                   >
                     Update

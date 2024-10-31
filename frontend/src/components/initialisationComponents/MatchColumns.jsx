@@ -5,7 +5,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 import SelectBox from "./SelectBox";
 import fileDownload from "js-file-download";
-import { applicantsSchemaColumnNames } from "./columnNames";
+import { applicantsSchemaColumnNames, columnMapping } from "./columnNames";
 import TaskIcon from '@mui/icons-material/Task';
 
 function getCookie(name) {
@@ -150,6 +150,9 @@ const MatchColumns = () => {
     <div>
       {!fileExists && columnNamesMatched !== null && !isLoading && (
         <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
+          <Typography variant="body1" color="error" align="center" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600', margin:'30px 50px' }}>
+            Select the correct fields from Excel Sheet in dropdown against the database fields!
+          </Typography>
           <Grid container spacing={2}>
             {Object.keys(columnNamesMatched).map((columnName) => (
               <Grid item xs={12} sm={6} md={4} key={columnName}>
@@ -171,13 +174,13 @@ const MatchColumns = () => {
                     color="textSecondary"
                     sx={{ flex: 1, fontWeight: '600', fontFamily: 'Maven Pro, sans serif', marginBottom: '10px' }}
                   >
-                    {columnName}
+                    {columnMapping[columnName]}
                   </Typography>
                   <SelectBox
                     uploadedColumnName={columnName}
                     predictedColumnName={columnNamesMatched[columnName]}
                     changeState={changeColumnNamesMatchedState}
-                    options = {optionsColumn}
+                    options={optionsColumn}
                     sx={{ fontWeight: '600', fontFamily: 'Maven Pro, sans serif' }}
                   />
                 </Box>

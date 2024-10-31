@@ -14,70 +14,69 @@ const currYear = tempYear - 2000;
 const prevYear = currYear - 1;
 const prevprevYear = currYear - 2;
 
-// var applicantsSchemaColumnNames =
-//     [
-//         "COAP",
-//         "AppNo",
-//         "Email",
-//         "FullName",
-//         "MaxGateScore",
-//         "Adm",
-//         "Pwd",
-//         "Ews",
-//         "Gender",
-//         "Category",
-//         "GATE" + currYear + "RollNo",
-//         "GATE" + currYear + "Rank",
-//         "GATE" + currYear + "Score",
-//         "GATE" + currYear + "Disc",
-//         "GATE" + prevYear + "RollNo",
-//         "GATE" + prevYear + "Rank",
-//         "GATE" + prevYear + "Score",
-//         "GATE" + prevYear + "Disc",
-//         "GATE" + prevprevYear + "Disc",
-//         "GATE" + prevprevYear + "RollNo",
-//         "GATE" + prevprevYear + "Rank",
-//         "GATE" + prevprevYear + "Score",
-//         "HSSCboard",
-//         "HSSCdate",
-//         "HSSCper",
-//         "SSCboard",
-//         "SSCdate",
-//         "SSCper",
-//         "DegreeQual",
-//         "DegreePassingDate",
-//         "DegreeBranch",
-//         "DegreeOtherBranch",
-//         "DegreeInstitute",
-//         "DegreeCGPA7thSem",
-//         "DegreeCGPA8thSem",
-//         "DegreePer7thSem",
-//         "DegreePer8thSem",
-//     ]
+var virtualColumnNames =
+    [
+        "COAP",
+        "AppNo",
+        "Email",
+        "FullName",
+        "MaxGateScore",
+        "Pwd",
+        "Ews",
+        "Gender",
+        "Category",
+        // "GATE" + currYear + "Rank",
+        "GATE" + currYear + "Score",
+        "GATE" + prevYear + "Score",
+        "GATE" + prevprevYear + "Score",
+        // "GATE" + currYear + "Disc",
+        // "GATE" + prevYear + "Rank",
+        // "GATE" + prevYear + "Disc",
+        // "GATE" + prevprevYear + "Disc",
+        "GATE" + currYear + "RollNo",
+        "GATE" + prevYear + "RollNo",
+        "GATE" + prevprevYear + "RollNo",
+        // "GATE" + prevprevYear + "Rank",
+        // "HSSCboard",
+        // "HSSCdate",
+        "HSSCper",
+        // "SSCboard",
+        // "SSCdate",
+        "SSCper",
+        // "DegreeQual",
+        // "DegreePassingDate",
+        // "DegreeBranch",
+        // "DegreeOtherBranch",
+        // "DegreeInstitute",
+        // "DegreeCGPA7thSem",
+        "DegreeCGPA8thSem",
+        // "DegreePer7thSem",
+        "DegreePer8thSem",
+        "Adm"
+    ]
 var applicantsSchemaColumnNames =
-[
-    "COAP",
-    "AppNo",
-    "Email",
-    "FullName",
-    "MaxGateScore",
-    "Pwd",
-    "Ews",
-    "Gender",
-    "Category",
-    "currYearScore",
-    "prevYearScore",
-    "prevprevYearScore",
-    "currYearRollNo",
-    "prevYearRollNo",
-    "prevprevYearRollNo",
-    "HSSCper",
-    "SSCper",
-    "DegreeCGPA8thSem",
-    "DegreePer8thSem",
-    "Adm",
-    // "OtherDetails"
-]
+    [
+        "COAP",
+        "AppNo",
+        "Email",
+        "FullName",
+        "MaxGateScore",
+        "Pwd",
+        "Ews",
+        "Gender",
+        "Category",
+        "currYearScore",
+        "prevYearScore",
+        "prevprevYearScore",
+        "currYearRollNo",
+        "prevYearRollNo",
+        "prevprevYearRollNo",
+        "HSSCper",
+        "SSCper",
+        "DegreeCGPA8thSem",
+        "DegreePer8thSem",
+        // "OtherDetails"
+    ]
 
 function mapColumnNames(filePath) {
     // Reading Excel file
@@ -89,22 +88,46 @@ function mapColumnNames(filePath) {
 
     // Extracting column names from the uploaded file
     var columnNames = Object.keys(applicantsData[0]);
-    var visitedColumnNames = {};
+    // var visitedColumnNames = {};
     var matchedColumnNames = {};
 
-    for (const columnName of columnNames) {
-        visitedColumnNames[columnName] = false;
-    }
+    // for (const columnName of columnNames) {
+    //     visitedColumnNames[columnName] = false;
+    // }
 
+    // OLD CODE
     // Loop over schema column names first, to find closest match in uploaded file columns
-    for (const actualColumnName of applicantsSchemaColumnNames) {
-        var minDist = 400;
-        var matchedString = "";
+    // for (const actualColumnName of applicantsSchemaColumnNames) {
+    //     var minDist = 400;
+    //     var matchedString = "";
 
-        // Finding nearest match for each schema column name in uploaded column names
-        for (const uploadedColumnName of columnNames) {
-            var currDist = distance(actualColumnName, uploadedColumnName);
-            if (currDist < minDist && !visitedColumnNames[uploadedColumnName]) {
+    //     // Finding nearest match for each schema column name in uploaded column names
+    //     for (const uploadedColumnName of columnNames) {
+    //         var currDist = distance(actualColumnName, uploadedColumnName);
+    //         if (currDist < minDist && !visitedColumnNames[uploadedColumnName]) {
+    //             minDist = currDist;
+    //             matchedString = uploadedColumnName;
+    //         }
+    //     }
+
+    //     // Set the matched uploaded column name and mark it as visited
+    //     matchedColumnNames[actualColumnName] = matchedString;
+    //     visitedColumnNames[matchedString] = true;
+    // }
+
+    // console.log(virtualColumnNames);
+    // NEW CODE
+    for (let i = 0; i < applicantsSchemaColumnNames.length; i++) {
+        const actualColumnName = applicantsSchemaColumnNames[i];
+        let minDist = 400;
+        let matchedString = "";
+
+        // Finding the nearest match for each schema column name in uploaded column names
+        for (let j = 0; j < columnNames.length; j++) {
+            const uploadedColumnName = columnNames[j];
+            const currDist = distance(virtualColumnNames[i], uploadedColumnName);
+
+            if (currDist < minDist) {
                 minDist = currDist;
                 matchedString = uploadedColumnName;
             }
@@ -112,8 +135,9 @@ function mapColumnNames(filePath) {
 
         // Set the matched uploaded column name and mark it as visited
         matchedColumnNames[actualColumnName] = matchedString;
-        visitedColumnNames[matchedString] = true;
+        // visitedColumnNames[matchedString] = true;
     }
+
 
     // console.log("Matched Column Names: ", matchedColumnNames);
 

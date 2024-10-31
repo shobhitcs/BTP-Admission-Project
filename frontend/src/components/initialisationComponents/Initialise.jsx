@@ -166,7 +166,7 @@ function Initialise(props) {
                   borderRadius: "6px",
                   padding: "6px 12px",
                   fontWeight: "bold",
-                  marginBottom: '40px',
+                  marginBottom: '10px',
                   boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                   textTransform: "none", // Keeps the text as-is, without capitalizing
                   transition: "background-color 0.3s ease, box-shadow 0.3s ease",

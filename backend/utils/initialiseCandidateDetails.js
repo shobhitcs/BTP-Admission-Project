@@ -174,13 +174,13 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
   /*
     Creating the values array which will be used to query(insert in) the database
   */
-  applicantsSchemaColumnNames.push("OtherDetails");
+  newschemacolumns = applicantsSchemaColumnNames.concat("OtherDetails");
   // console.log("data", applicantsData[0]);
   // console.log("data", applicantsData[1]);
   var valuesToBeInserted = [];
   for (var applicant of applicantsData) {
     var applicantAttributes = [];
-    for (var columnName of applicantsSchemaColumnNames) {
+    for (var columnName of newschemacolumns) {
       //calculating max gate score
       if (columnName == "MaxGateScore") {
         if (applicant["MaxGateScore"] != null && applicant["MaxGateScore"] != '') {
@@ -320,7 +320,7 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
   // columnNames = columnNames.slice(0, -1);
   // columnNames += ")";
 
-  var columnNames = "(" + applicantsSchemaColumnNames.join(",") + ")";
+  var columnNames = "(" + newschemacolumns.join(",") + ")";
   // console.log("the console column names is: ", columnNames);
   /*
     inserting into database

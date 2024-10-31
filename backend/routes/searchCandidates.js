@@ -86,7 +86,7 @@ router.get("/getinfo/:coapid", isAuthenticated, async (req, res) => {
 
     const [filteredList] = await con.query(`
       SELECT FullName, AppNo AS ApplicationNumber, mtechappl.COAP, Email, MaxGateScore, Gender, Category,
-      EWS, PWD, Adm, SSCper, HSSCper, DegreeCGPA8thSem,
+      EWS, PWD, SSCper, HSSCper, DegreeCGPA8thSem,
       Offered, Accepted, OfferCat, IsOfferPwd, OfferedRound,
       RetainRound, RejectOrAcceptRound
       FROM mtechappl

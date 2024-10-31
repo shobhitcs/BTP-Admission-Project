@@ -66,7 +66,6 @@ var applicantsSchema = `(
   DegreeCGPA8thSem float(24), 
   branch VARCHAR(50),
   GateRegNum text,
-  Adm text,
   OtherDetails text
   )
   `;
@@ -132,7 +131,6 @@ applicantsSchemaColumnNames = [
   "DegreeCGPA8thSem",
   "branch",
   "GateRegNum",
-  "Adm"
 ];
 module.exports = { applicantsSchema, applicantsSchemaColumnNames };
 
