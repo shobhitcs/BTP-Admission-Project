@@ -22,7 +22,7 @@ const deleteBranchRoute = require("./routes/deleteBranchRoute");
 
 
 require("dotenv").config();
-app.use(morgan('dev'))
+// app.use(morgan('dev'))
 // app.use(cors());
 
 // app.use(
