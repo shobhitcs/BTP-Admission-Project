@@ -231,7 +231,7 @@ async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
       //calculating virtual cgpa
       else if (columnName === "DegreeCGPA8thSem") {
         if (applicant["DegreeCGPA8thSem"] == null || applicant["DegreeCGPA8thSem"] == '') {
-          if (applicant["DegreePer8thSem"] != null && !applicant["DegreePer8thSem"] != '') {
+          if (applicant["DegreePer8thSem"] != null && applicant["DegreePer8thSem"] != '') {
             applicant["DegreeCGPA8thSem"] = applicant["DegreePer8thSem"] / 10;
           }
           else {
