@@ -20,7 +20,7 @@ var virtualColumnNames =
         "AppNo",
         "Email",
         "FullName",
-        "MaxGateScore",
+        "MaxGATEScore out of 3 yrs",
         "Pwd",
         "Ews",
         "Gender",

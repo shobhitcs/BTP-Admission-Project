@@ -153,6 +153,9 @@ const MatchColumns = () => {
           <Typography variant="body1" color="error" align="center" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600', margin:'30px 50px' }}>
             Select the correct fields from Excel Sheet in dropdown against the database fields!
           </Typography>
+          <Typography variant="body1" color="blue" align="center" sx={{ fontFamily: 'Maven Pro, sans-serif', fontWeight: '600', margin:'30px 50px' }}>
+            Double cross-check MAXGATESCORE !!
+          </Typography>
           <Grid container spacing={2}>
             {Object.keys(columnNamesMatched).map((columnName) => (
               <Grid item xs={12} sm={6} md={4} key={columnName}>
