@@ -75,6 +75,35 @@ function RoundUpdateFiles(props) {
         .then((res) => {
           setColumnNames(res.data.result);
           setIsLoading(false);
+          const valCol1 = ["CID", "Coap Reg ID"] // probable values of column1
+          // Check if valcol1 is present in columnNames and set it as default in column1 if found
+          const defaultColumn1 = valCol1.find((val) =>
+            res.data.result.some((col) => col.includes(val))
+          );
+          if (defaultColumn1) {
+            setCoap(defaultColumn1);
+          }
+
+          if (props.fileName === "IITGOfferedButNotInterested") {
+            // Check if valcol2 is present in columnNames and set it as default in column1 if found
+            const valCol2 = ['OtherInstt', 'Other Institute Decision'] // probable values of column2
+            const defaultColumn2 = valCol2.find((val) =>
+              res.data.result.some((col) => col.includes(val))
+            );
+            if (defaultColumn2) {
+              setCandidateDecision(defaultColumn2);
+            }
+          }
+          else {
+            // Check if valcol2 is present in columnNames and set it as default in column1 if found
+            const valCol2 = ['App Status', 'Applicant Decision'] // probable values of column2
+            const defaultColumn2 = valCol2.find((val) =>
+              res.data.result.some((col) => col.includes(val))
+            );
+            if (defaultColumn2) {
+              setCandidateDecision(defaultColumn2);
+            }
+          }
         })
         .catch((err) => {
           setSnackbarMessage("Failed to fetch column names.");
