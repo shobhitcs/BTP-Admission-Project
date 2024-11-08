@@ -16,15 +16,15 @@ function SeatMatrixRow({ category, seatsAllocated, seatsBooked, onSeatsChange })
   };
 
   return (
-    <TableRow key={category} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TableCell component="th" scope="row" style={{ fontSize: "15px", fontWeight: "bold", color: "#343131" }}>
+    <TableRow key={category} sx={{backgroundColor:"",minWidth:"90%"}}>
+      <TableCell component="th" scope="row" style={{ fontSize: "15px", fontWeight: "bold", color: "#343131", width:"40%"}}>
         {category}
       </TableCell>
-      <TableCell align="center">
+      <TableCell align="center" style={{ width:"20%"}}>
         <TextField type="number" onChange={handleChangeSeats} value={seats} />
       </TableCell>
-      <TableCell align="center">{seatsAllocated}</TableCell>
-      <TableCell align="center">{seatsBooked}</TableCell>
+      <TableCell align="center" style={{ width:"20%"}}>{seatsAllocated}</TableCell>
+      <TableCell align="center" style={{ width:"20%"}}>{seatsBooked}</TableCell>
     </TableRow>
   );
 }

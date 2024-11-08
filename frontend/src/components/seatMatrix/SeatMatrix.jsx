@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Snackbar,
-  Alert,
-  CircularProgress,
-  Box,
-  Button,
-} from "@mui/material";
+import { TableCell,TableRow, Snackbar, Alert, CircularProgress, Box, Button, Typography } from "@mui/material";
 import SeatMatrixRow from "./SeatMatrixRow";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 function SeatMatrix() {
   const navigate = useNavigate();
 
@@ -29,7 +19,7 @@ function SeatMatrix() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
-  const [expandedCategory, setExpandedCategory] = useState(null); // State for tracking the expanded category
+ 
 
   // Snackbar states
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -91,10 +81,6 @@ function SeatMatrix() {
     );
   };
 
-  // Toggle category for expanding or collapsing
-  const toggleCategory = (category) => {
-    setExpandedCategory(expandedCategory === category ? null : category);
-  };
 
   const handleSaveAll = async () => {
     try {
@@ -155,96 +141,62 @@ function SeatMatrix() {
     >
       {!isLoading && (
         <>
-          <TableContainer component={Paper} sx={{ maxWidth: "1400px" }}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="seat matrix">
-              <TableHead>
-                <TableRow sx={{ backgroundColor: "#343131", height: 70 }}>
-                  <TableCell
-                    sx={{
-                      fontSize: 18,
-                      color: "white",
-                      fontFamily: "Maven Pro, sans-serif",
-                    }}
-                    align="center"
-                  >
+          {mainCategories.map((mainCategory) => (
+
+            <Accordion key={mainCategory.id} sx={{
+              width: '80%',
+              minHeight: '60px',
+            }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',      
+                  width: '100%',             
+                  padding: 1        
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',      
+                    width: '100%',
+                    fontSize: 18, color: "", fontFamily: 'Maven Pro, sans-serif'
+                  }}
+                >
+                  <Typography fontWeight="bold" sx={{fontSize: 19, marginRight:1}}>{`${mainCategory} :`}</Typography>
+                  {generateCategorySummary(mainCategory)}
+                </Box>
+                
+              </AccordionSummary>
+              <AccordionDetails sx={{ backgroundColor: '' }}>
+                <TableRow key={123} sx={{ backgroundColor: "", minWidth: "90%" }}>
+                  <TableCell component="th" scope="row" style={{ fontSize: 18, color: "", fontFamily: 'Maven Pro, sans-serif', width: "40%", }}>
                     Category
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 18,
-                      color: "white",
-                      fontFamily: "Maven Pro, sans-serif",
-                    }}
-                    align="center"
-                  >
+                  <TableCell align="center" style={{fontSize: 18, color: "", fontFamily: 'Maven Pro, sans-serif', width: "20%" }}>
                     Set Seats
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 18,
-                      color: "white",
-                      fontFamily: "Maven Pro, sans-serif",
-                    }}
-                    align="center"
-                  >
-                    Seats Allocated
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 18,
-                      color: "white",
-                      fontFamily: "Maven Pro, sans-serif",
-                    }}
-                    align="center"
-                  >
-                    Seats Booked
-                  </TableCell>
+                  <TableCell align="center" style={{fontSize: 18, color: "", fontFamily: 'Maven Pro, sans-serif', width: "20%" }}>Seats Allocated</TableCell>
+                  <TableCell align="center" style={{fontSize: 18, color: "", fontFamily: 'Maven Pro, sans-serif', width: "20%", }}>Seats Booked</TableCell>
                 </TableRow>
-              </TableHead>
 
-              <TableBody>
-                {mainCategories.map((mainCategory) => (
-                  <React.Fragment key={mainCategory}>
-                    {/* Main Category Row */}
-                    <TableRow
-                      onClick={() => toggleCategory(mainCategory)}
-                      sx={{ backgroundColor: "#e0e0e0", cursor: "pointer" }}
-                    >
-                      <TableCell colSpan={4} align="center">
-                        <strong style={{ fontSize: 23, fontFamily: "Maven Pro, sans-serif" }}>
-                          {mainCategory}{" "}
-                          {/* Always show summary for collapsed categories */}
-                          {expandedCategory !== mainCategory && (
-                            <span
-                              style={{
-                                fontSize: 18,
-                                color: "#555",
-                                marginLeft: "10px",
-                                letterSpacing: "0.5px", // Add letter spacing for better appearance
-                              }}
-                            >
-                              : {generateCategorySummary(mainCategory)}
-                            </span>
-                          )}
-                        </strong>
-                      </TableCell>
-                    </TableRow>
-                    {/* Subcategory Rows */}
-                    {expandedCategory === mainCategory &&
-                      getSubcategories(mainCategory).map((row) => (
-                        <SeatMatrixRow
-                          key={row.category}
-                          category={row.category}
-                          seatsAllocated={row.seats}
-                          seatsBooked={row.seatsBooked}
-                          onSeatsChange={handleSeatsChange}
-                        />
-                      ))}
-                  </React.Fragment>
+                {getSubcategories(mainCategory).map((row) => (
+                  <SeatMatrixRow
+                    key={row.category} // Make sure each row has a unique category
+                    category={row.category}
+                    seatsAllocated={row.seats}
+                    seatsBooked={row.seatsBooked}
+                    onSeatsChange={handleSeatsChange}
+                  />
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </AccordionDetails>
+            </Accordion>
+
+          ))}
+
           {/*  Update all at once feature */}
           <Button
             variant="contained"
