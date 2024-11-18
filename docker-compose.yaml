@@ -16,7 +16,7 @@ services:
       - ADMIN_PASSWORD=admin@123
       - userFilePath=files
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes: 
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
@@ -35,8 +35,8 @@ services:
           memory: 256M
 
   backend:
-    build: ./BTP_Backend
-    image: btp-backend-compose
+    build: ./backend
+    image: backend
     environment:
       - MYSQL_DATABASE=applicants2023
       - MYSQL_PASSWORD=password
@@ -65,10 +65,10 @@ services:
       retries: 5
 
   frontend:
-    build: ./BTP_Frontend
-    image: btp-frontend-compose
+    build: ./frontend
+    image: frontend
     ports:
-      - 80:8004
+      - 3000:8004
     stdin_open: true
     restart: always
 
