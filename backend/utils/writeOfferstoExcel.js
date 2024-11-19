@@ -19,20 +19,46 @@ async function writeToExcel(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE mtechappl.Category='${category}' AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 function formatDate(dateString) {
@@ -173,20 +199,46 @@ async function writeToExcelFemaleCandidates(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE mtechappl.Category='${category}' AND Gender = "Female" AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 async function writeToExcelEWS(
@@ -202,20 +254,46 @@ async function writeToExcelEWS(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE EWS='Yes' AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 async function writeToExcelAllOffers(con, sheetName, round, fileName, branch) {
@@ -224,17 +302,42 @@ async function writeToExcelAllOffers(con, sheetName, round, fileName, branch) {
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
-        WHERE (OfferedRound='${round}' OR Accepted='R' OR Accepted='Y') AND mtechappl.branch = '${branch}' ORDER BY applicationstatus.offerCat ASC,mtechappl.MaxGateScore DESC`);
+        WHERE (OfferedRound='${round}' OR Accepted='R' OR Accepted='Y') AND mtechappl.branch = '${branch}' ORDER BY applicationstatus.offerCat ASC, mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // Optionally, delete the default Sheet1
     deleteWorksheet(fileName, "Sheet1");
   } catch (error) {
     throw error;
@@ -254,20 +357,46 @@ async function writeToExcelGeneral(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 async function writeToExcelGeneralFemale(
@@ -283,20 +412,47 @@ async function writeToExcelGeneralFemale(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE Gender="Female" AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 async function writeToExcelPWD(
@@ -312,20 +468,46 @@ async function writeToExcelPWD(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE Pwd='Yes' AND category REGEXP '${category}' AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }
+
 }
 
 async function writeToExcelEWSPWD(
@@ -341,17 +523,43 @@ async function writeToExcelEWSPWD(
   for (var columnName of applicantsSchemaColumnNames) {
     columnNames += `mtechappl.${columnName}` + ",";
   }
-  columnNames = columnNames.slice(0, -1);
+  columnNames += `mtechappl.OtherDetails`;
+
+  // columnNames = columnNames.slice(0, -1);
 
   try {
     var [result] = await con.query(`SELECT ${columnNames} FROM mtechappl 
         LEFT JOIN applicationstatus
         ON mtechappl.COAP = applicationstatus.COAP 
         WHERE Pwd='Yes' AND EWS='Yes' AND category REGEXP '${category}' AND mtechappl.branch = '${branch}' ORDER BY mtechappl.MaxGateScore DESC`);
+
+    // Uncompress OtherDetails for all rows
+    const expandedResult = result.map(row => {
+      const newRow = { ...row }; // Clone the original row
+
+      if (newRow["OtherDetails"]) {
+        try {
+          // Parse and expand OtherDetails
+          const otherDetails = JSON.parse(newRow["OtherDetails"]);
+          delete newRow["OtherDetails"]; // Remove the compressed field
+
+          // Merge parsed fields into the row
+          Object.assign(newRow, otherDetails);
+        } catch (error) {
+          console.error("Failed to parse OtherDetails for row:", row, error);
+        }
+      }
+
+      return newRow;
+    });
+
+    // Write expanded data to the Excel file
     const file = reader.readFile(fileName);
-    const ws = reader.utils.json_to_sheet(result);
+    const ws = reader.utils.json_to_sheet(expandedResult);
     reader.utils.book_append_sheet(file, ws, sheetName);
     reader.writeFile(file, fileName);
+
+    // console.log(`File ${fileName} updated with uncompressed OtherDetails in sheet ${sheetName}`);
   } catch (error) {
     throw error;
   }

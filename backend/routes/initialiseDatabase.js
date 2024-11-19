@@ -103,17 +103,32 @@ router.post("/saveToDataBase", isAuthenticated, async (req, res) => {
     });
     // console.log("applicants ka data idhar hai?", applicantsData);
     var data = [];
+    // console.log("Match", matchedColumns);
     //modyfing the column names
     for (const applicant of applicantsData) {
       row = {};
+      // Set of keys to exclude from OtherDetails
+      const excludedKeys = new Set();
+
       for (const uploadedColumn of Object.keys(matchedColumns)) {
-        selectedColumn = matchedColumns[uploadedColumn];
-        if (selectedColumn != "ignore" && applicant[uploadedColumn] != "") {
+        const selectedColumn = matchedColumns[uploadedColumn];
+        if (selectedColumn !== "ignore" && applicant[uploadedColumn] !== "") {
           row[uploadedColumn] = applicant[selectedColumn];
         }
+        if (selectedColumn !== "ignore") {
+          excludedKeys.add(selectedColumn); // Add to excluded keys
+        }
       }
-      // console.log("applicant", applicant);
-      row["OtherDetails"] = JSON.stringify(applicant);
+
+      // Remove fields that match selectedColumn from OtherDetails
+      const filteredOtherDetails = {};
+      for (const [key, value] of Object.entries(applicant)) {
+        if (!excludedKeys.has(key)) {
+          filteredOtherDetails[key] = value;
+        }
+      }
+
+      row["OtherDetails"] = JSON.stringify(filteredOtherDetails);
       data.push(row);
     }
     // console.log("the data is present in here: ", data);
@@ -125,9 +140,37 @@ router.post("/saveToDataBase", isAuthenticated, async (req, res) => {
   //creating the new excel file with modified column names
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Responses");
+  XLSX.utils.book_append_sheet(wb, ws, "ModifiedDetails");
   XLSX.writeFile(wb, `${branchFolder}/modifiedFile.xlsx`);
   //initialising the seatmatrix table
+
+  // Creating the modified data for the unzipModifiedFile
+  const unzipData = data.map(row => {
+    const newRow = { ...row }; // Clone the original row
+
+    if (newRow["OtherDetails"]) {
+      try {
+        // Parse and expand the OtherDetails column
+        const otherDetails = JSON.parse(newRow["OtherDetails"]);
+        delete newRow["OtherDetails"]; // Remove the stringified version
+
+        // Add uncompressed details to the row
+        Object.assign(newRow, otherDetails);
+      } catch (error) {
+        console.error("Failed to parse OtherDetails:", error);
+      }
+    }
+
+    return newRow;
+  });
+
+  // Create the new Excel file with uncompressed OtherDetails
+  const unzipWs = XLSX.utils.json_to_sheet(unzipData);
+  const unzipWb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(unzipWb, unzipWs, "UnzippedModifiedDetails");
+  XLSX.writeFile(unzipWb, `${branchFolder}/unzipModifiedFile.xlsx`);
+
+
   try {
     let res2 = await enterCandidateDetailsToDatabase(
       req.user.branch,
@@ -280,7 +323,7 @@ router.get("/modifiedFile", isAuthenticated, async (req, res) => {
       root: path.join(__dirname),
     };
     // Sending stored file
-    var fileName = `${userFilePath}/${req.user.branch}/modifiedFile.xlsx`;
+    var fileName = `${userFilePath}/${req.user.branch}/unzipModifiedFile.xlsx`;
     res.sendFile(fileName, function (err) {
       if (err) {
         console.log(err);

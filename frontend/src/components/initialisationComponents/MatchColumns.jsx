@@ -120,7 +120,7 @@ const MatchColumns = () => {
           withCredentials: true,
         })
         .then((res) => {
-          fileDownload(res.data, "modifiedFile.xlsx");
+          fileDownload(res.data, "unZippedmodifiedFile.xlsx");
         })
         .catch((err) => {
           handleErrorResponse(err);
