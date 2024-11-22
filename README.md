@@ -64,7 +64,7 @@ userFilePath: files<br>
 MYSQL_HOST_IP: <your_ip_address><br>
 BACKEND_URL: http://<your_ip_address>
 
-Create a .env file inside the "frontend" folder and given code with corresponding details :
+Create a .env file inside the "frontend" folder and add given code with corresponding details :
 <br>
 <br>
 REACT_APP_BACKEND_URL=http://<your_ip_address>:4444
