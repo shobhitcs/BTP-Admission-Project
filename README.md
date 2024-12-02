@@ -48,7 +48,7 @@ This command will remove the spawned containers as well as the data/volumes asso
 
 ### `Environment variables`
 
-Create a .env file inside the BTP_Backend code
+Create a .env file inside the "backend" folder and add given code with corresponding details :
 <br>
 <br>
 MYSQL_DATABASE: applicants2023 <br>
@@ -64,7 +64,7 @@ userFilePath: files<br>
 MYSQL_HOST_IP: <your_ip_address><br>
 BACKEND_URL: http://<your_ip_address>
 
-Create a .env file inside the BTP_Frontend code
+Create a .env file inside the "frontend" folder and add given code with corresponding details :
 <br>
 <br>
 REACT_APP_BACKEND_URL=http://<your_ip_address>:4444
