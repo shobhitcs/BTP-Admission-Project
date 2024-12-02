@@ -17,8 +17,8 @@ async function updateDecision(
     const query = `SELECT OfferedRound, RetainRound, RejectOrAcceptRound FROM applicationstatus WHERE COAP = ? AND branch = ?;`;
     // console.log("Query:", query, "Parameters:", [currCOAP, branch]);
     const [checkPreviousStatus] = await con.query(query, [currCOAP, branch]);
-    console.log("COAP ID:", currCOAP);
-    console.log("Query result:", checkPreviousStatus);
+    // console.log("COAP ID:", currCOAP);
+    // console.log("Query result:", checkPreviousStatus);
     if (checkPreviousStatus.length === 0) {
       try {
         const insertQuery = `INSERT INTO applicationstatus (COAP, Offered, Accepted, RejectOrAcceptRound, branch) VALUES (?, '', 'E', ?, ?)`;
@@ -27,7 +27,7 @@ async function updateDecision(
         //   round,
         //   branch,
         // ]);
-        console.log(currCOAP,"inserted")
+        // console.log(currCOAP,"inserted")
         await con.query(insertQuery, [currCOAP, round, branch]);
       } catch (error) {
         throw error;
