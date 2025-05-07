@@ -1,6 +1,7 @@
 var XLSX = require("xlsx");
 var mysql = require("mysql2");
 const { selectQuery } = require("./sqlqueries");
+const connection = require("../config/dbConfig");
 
 async function updateDecision(
   con,
@@ -83,17 +84,18 @@ async function updateStatusIITGList(
   candidateDecisonColumnName,
   branch
 ) {
-  var con = mysql
-    .createPool({
-      // host: process.env.MYSQL_HOSTNAME,
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     // host: process.env.MYSQL_HOSTNAME,
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
   var workbook = XLSX.readFile(filePath);
   var applicantsDataSheet = workbook.Sheets[workbook.SheetNames[0]];
   var applicantsData = XLSX.utils.sheet_to_json(applicantsDataSheet);

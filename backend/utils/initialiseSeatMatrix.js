@@ -2,6 +2,7 @@ var { createTable, insertManyIntoTable } = require("./sqlqueries.js");
 var { seatMatrixSchema } = require("../schemas/seatMatrixSchema.js");
 var mysql = require("mysql2");
 const sqlQueries = require("./sqlqueries.js");
+const connection = require("../config/dbConfig.js");
 
 /*
     Name: initialiseSeatMatrix
@@ -12,17 +13,18 @@ const sqlQueries = require("./sqlqueries.js");
 async function initialiseSeatMatrix(branch, seatAllotedData) {
   try {
     // Creating a Connection
-    var con = mysql
-      .createPool({
-        // host: process.env.MYSQL_HOSTNAME,
-        host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-        user: "root",
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-        debug: false,
-        insecureAuth: true,
-      })
-      .promise();
+    // var con = mysql
+    //   .createPool({
+    //     // host: process.env.MYSQL_HOSTNAME,
+    //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //     user: "root",
+    //     password: process.env.MYSQL_PASSWORD,
+    //     database: process.env.MYSQL_DATABASE,
+    //     debug: false,
+    //     insecureAuth: true,
+    //   })
+    //   .promise();
+    var con = connection
 
     // Define table name
     const tableName = `seatMatrix`;

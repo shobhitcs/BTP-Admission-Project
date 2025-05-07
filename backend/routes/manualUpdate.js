@@ -16,6 +16,7 @@ const updatesFromRoundsDirectoryPath = path.join(
   "roundUpdates"
 );
 var mysql = require("mysql2");
+const connection = require("../config/dbConfig");
 /*
     Function name:getFilesInDirectory
     input : directory path
@@ -88,17 +89,18 @@ router.post("/manualUpdate", isAuthenticated, async (req, res) => {
   //connecting to database
   var con;
   try {
-    var con = mysql
-      .createPool({
-        // host: process.env.MYSQL_HOSTNAME,
-        host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-        user: "root",
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-        debug: false,
-        insecureAuth: true,
-      })
-      .promise();
+    // var con = mysql
+    //   .createPool({
+    //     // host: process.env.MYSQL_HOSTNAME,
+    //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //     user: "root",
+    //     password: process.env.MYSQL_PASSWORD,
+    //     database: process.env.MYSQL_DATABASE,
+    //     debug: false,
+    //     insecureAuth: true,
+    //   })
+    //   .promise();
+    var con = connection
   } catch (error) {
     console.log("Error connecting to database:", error);
     res.status(500).send({ result: "Internal server error" });

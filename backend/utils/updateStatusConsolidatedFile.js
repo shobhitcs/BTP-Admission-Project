@@ -1,6 +1,7 @@
 const XLSX = require("xlsx");
 const mysql = require("mysql2");
 const { selectQuery } = require("./sqlqueries");
+const connection = require("../config/dbConfig");
 
 async function updateDecision(
   con,
@@ -61,17 +62,18 @@ async function updateStatusConsolidatedFile(
   candidateDecisonColumnName,
   branch
 ) {
-  var con = mysql
-    .createPool({
-      // host: process.env.MYSQL_HOSTNAME,
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     // host: process.env.MYSQL_HOSTNAME,
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
   const workbook = XLSX.readFile(filePath);
   const applicantsDataSheet = workbook.Sheets[workbook.SheetNames[0]];
   const applicantsData = XLSX.utils.sheet_to_json(applicantsDataSheet);

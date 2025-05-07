@@ -2,18 +2,20 @@ const express = require("express");
 const router = express.Router();
 const isAuthenticated = require("../middleware/authMiddleware");
 const mysql = require("mysql2");
+const connection = require("../config/dbConfig");
 
 // Route to get seat matrix data
 router.get("/seatMatrixData", isAuthenticated, async (req, res) => {
   try {
-    const con = mysql.createPool({
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    }).promise();
+    // const con = mysql.createPool({
+    //   host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //   user: "root",
+    //   password: process.env.MYSQL_PASSWORD,
+    //   database: process.env.MYSQL_DATABASE,
+    //   debug: false,
+    //   insecureAuth: true,
+    // }).promise();
+    const con = connection
 
     const branch = req.user.branch;
 
@@ -42,14 +44,15 @@ router.post("/updateSeatsBulk", isAuthenticated, async (req, res) => {
   }
 
   try {
-    const con = mysql.createPool({
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    }).promise();
+    // const con = mysql.createPool({
+    //   host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //   user: "root",
+    //   password: process.env.MYSQL_PASSWORD,
+    //   database: process.env.MYSQL_DATABASE,
+    //   debug: false,
+    //   insecureAuth: true,
+    // }).promise();
+    const con  = connection
 
     // Update the seats for each category in the branch in parallel using Promise.all and async/await syntax
     const promises = updates.map(row => {

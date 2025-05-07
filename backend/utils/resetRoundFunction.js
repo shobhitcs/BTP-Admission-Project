@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const mysql = require("mysql2");
+const connection = require("../config/dbConfig");
 
 async function resetRoundFunction(inputRoundNumber, branch) {
   const roundNumber = inputRoundNumber;
@@ -36,17 +37,18 @@ async function resetRoundFunction(inputRoundNumber, branch) {
   }
 
   // Connecting to database
-  var con = mysql
-    .createPool({
-      // host: process.env.MYSQL_HOSTNAME,
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     // host: process.env.MYSQL_HOSTNAME,
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
 
   // Deleting all the offered candidates in that round and retain and accepted round as that of current number
   try {

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const mysql = require("mysql2");
 const isAuthenticated = require("../middleware/authMiddleware");
+const connection = require("../config/dbConfig");
 
 router.get("/getCoapIds", isAuthenticated, async (req, res) => {
   // console.log("csearch wala request", req.user);
@@ -8,17 +9,18 @@ router.get("/getCoapIds", isAuthenticated, async (req, res) => {
   const branch = req.user.branch;
 
   try {
-    var con = mysql
-      .createPool({
-        // host: process.env.MYSQL_HOSTNAME,
-        host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-        user: "root",
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-        debug: false,
-        insecureAuth: true,
-      })
-      .promise();
+    // var con = mysql
+    //   .createPool({
+    //     // host: process.env.MYSQL_HOSTNAME,
+    //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //     user: "root",
+    //     password: process.env.MYSQL_PASSWORD,
+    //     database: process.env.MYSQL_DATABASE,
+    //     debug: false,
+    //     insecureAuth: true,
+    //   })
+    //   .promise();
+    var con = connection
     const [coapIdsList] = await con.query(
       `SELECT COAP as label FROM mtechappl WHERE branch = '${branch}'`
     );
@@ -33,17 +35,18 @@ router.get("/getCoapIds", isAuthenticated, async (req, res) => {
 router.post("/getinfo", isAuthenticated, async (req, res) => {
   // console.log("req.user.branch is :", req.user.branch);
   try {
-    var con = mysql
-      .createPool({
-        // host: process.env.MYSQL_HOSTNAME,
-        host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-        user: "root",
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-        debug: false,
-        insecureAuth: true,
-      })
-      .promise();
+    // var con = mysql
+    //   .createPool({
+    //     // host: process.env.MYSQL_HOSTNAME,
+    //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //     user: "root",
+    //     password: process.env.MYSQL_PASSWORD,
+    //     database: process.env.MYSQL_DATABASE,
+    //     debug: false,
+    //     insecureAuth: true,
+    //   })
+    //   .promise();
+    var con = connection
     const { category, gender, coapId } = req.body;
 
     const filteredCategory = category ? category.label : "\\w*";
@@ -71,17 +74,18 @@ router.post("/getinfo", isAuthenticated, async (req, res) => {
 
 router.get("/getinfo/:coapid", isAuthenticated, async (req, res) => {
   try {
-    var con = mysql
-      .createPool({
-        // host: process.env.MYSQL_HOSTNAME,
-        host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-        user: "root",
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-        debug: false,
-        insecureAuth: true,
-      })
-      .promise();
+    // var con = mysql
+    //   .createPool({
+    //     // host: process.env.MYSQL_HOSTNAME,
+    //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+    //     user: "root",
+    //     password: process.env.MYSQL_PASSWORD,
+    //     database: process.env.MYSQL_DATABASE,
+    //     debug: false,
+    //     insecureAuth: true,
+    //   })
+    //   .promise();
+    var con = connection
     const coapid = req.params.coapid;
 
     const [filteredList] = await con.query(`

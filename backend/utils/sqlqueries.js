@@ -74,16 +74,27 @@ async function insertManyIntoTable(
     input :connection object,query that is to be queried
     output: result if succeeds else error
 */
-const selectQuery = function (con, queryString) {
-  return new Promise((resolve, reject) => {
-    con.query(queryString, function (err, result, fields) {
-      if (err) {
-        reject(err);
-      }
-      resolve(result);
-    });
-  });
+// const selectQuery = function (con, queryString) {
+//   return new Promise((resolve, reject) => {
+//     con.query(queryString, function (err, result, fields) {
+//       if (err) {
+//         reject(err);
+//       }
+//       resolve(result);
+//     });
+//   });
+// };
+
+const selectQuery = async function (con, queryString) {
+  try {
+    // Using pool.query directly with await to get the result
+    const [result, fields] = await con.promise().query(queryString);
+    return result; // Return the result if no error
+  } catch (err) {
+    throw err; // Throw the error to be handled elsewhere
+  }
 };
+
 
 /* 
     function Name: checkTableExists

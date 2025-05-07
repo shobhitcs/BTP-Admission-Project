@@ -4,6 +4,7 @@ var applicantsSchema = require("../schemas/applicantsSchema").applicantsSchema;
 var applicantsSchemaColumnNames =
   require("../schemas/applicantsSchema").applicantsSchemaColumnNames;
 var mysql = require("mysql2");
+const connection = require("../config/dbConfig");
 
 const tempDate = new Date();
 let tempYear = tempDate.getFullYear();
@@ -139,17 +140,18 @@ const prevprevYear = currYear - 2;
 //   }
 async function enterCandidateDetailsToDatabase(branch, filePath, databaseName) {
   //Creating a Connection
-  var con = mysql
-    .createPool({
-      // host: process.env.MYSQL_HOSTNAME,
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     // host: process.env.MYSQL_HOSTNAME,
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
 
   // Check if the table exists
   var tableExists = await sqlQueries.checkTableExists(con, "mtechappl");

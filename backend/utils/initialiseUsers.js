@@ -1,6 +1,7 @@
 var { createTable, insertManyIntoTable } = require("./sqlqueries.js");
 var { usersSchema } = require("../schemas/usersSchema.js"); // Assuming you have a file for the users schema
 var mysql = require("mysql2");
+const connection = require("../config/dbConfig.js");
 
 /*
     Name: initializeUsersTable
@@ -19,17 +20,18 @@ async function checkTableExists(connection, tableName) {
 }
 
 async function initializeUsersTable(databaseName, userData) {
-  var con = mysql
-    .createPool({
-      // host: process.env.MYSQL_HOSTNAME,
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     // host: process.env.MYSQL_HOSTNAME,
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
   // console.log(usersSchema);
 
   try {

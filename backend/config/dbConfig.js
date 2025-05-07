@@ -1,23 +1,44 @@
 const mysql = require("mysql2");
 require("dotenv").config();
 
-const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-  user: "root",
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  debug: false,
-  insecureAuth: true,
-});
+// const connection = mysql.createConnection({
+//   host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+//   user: "root",
+//   password: process.env.MYSQL_PASSWORD,
+//   database: process.env.MYSQL_DATABASE,
+//   debug: false,
+//   insecureAuth: true,
+// });
+const connection = mysql
+    .createPool({
+      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+      user: "root",
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      debug: false,
+      insecureAuth: true,
+    })
+    .promise();
 
-// Connect to the database
-connection.connect((err) => {
-  if (err) {
+async function checkConnection() {
+  try {
+    const [rows, fields] = await connection.execute("SELECT 1");
+    console.log("Hi, Database connection is successful.");
+  } catch (err) {
     console.error("Error connecting to the database:", err);
-    return;
   }
+}
 
-  console.log("Connected to the database");
+checkConnection();
+
+// // Connect to the database
+// connection.connect((err) => {
+//   if (err) {
+//     console.error("Error connecting to the database:", err);
+//     return;
+//   }
+
+//   console.log("Connected to the database");
 
   // Uncomment the following blocks for testing specific tables
 
@@ -57,7 +78,7 @@ connection.connect((err) => {
   //   console.log("Fetched rows from branches:", rows);
   // });
 
-});
+// });
 
 // Export the connection object
 module.exports = connection;

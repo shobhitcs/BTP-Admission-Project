@@ -2,6 +2,7 @@ var { createTable, insertManyIntoTable } = require("./sqlqueries.js");
 var { usersSchema } = require("../schemas/usersSchema.js"); // Assuming you have a file for the users schema
 var { branchSchema } = require("../schemas/branchesSchema.js");
 var mysql = require("mysql2");
+const connection = require("../config/dbConfig.js");
 
 /*
     Name: initializeBranchTable
@@ -26,16 +27,17 @@ async function initializeBranchTable(databaseName, branchData) {
   // console.log("pass: ", process.env.MYSQL_PASSWORD);
   // console.log("host: ", process.env.MYSQL_HOSTNAME);
   // console.log("database: ", process.env.MYSQL_DATABASE);
-  var con = mysql
-    .createPool({
-      host: process.env.MYSQL_HOST_IP || "127.0.0.1",
-      user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      debug: false,
-      insecureAuth: true,
-    })
-    .promise();
+  // var con = mysql
+  //   .createPool({
+  //     host: process.env.MYSQL_HOST_IP || "127.0.0.1",
+  //     user: "root",
+  //     password: process.env.MYSQL_PASSWORD,
+  //     database: process.env.MYSQL_DATABASE,
+  //     debug: false,
+  //     insecureAuth: true,
+  //   })
+  //   .promise();
+  var con = connection
 
   // console.log("hekko");
   try {
